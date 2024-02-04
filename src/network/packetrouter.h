@@ -8,14 +8,14 @@
 
 class PacketRouter
 {
-    using Route = std::function<void(AbstractPacket *)>;
+    using Route = std::function<void(std::shared_ptr<AbstractPacket>)>;
     using Routes = QList<Route>;
 
   public:
     PacketRouter() = default;
 
     void registerRoute(QString f_identifier, Route f_route);
-    void route(AbstractPacket *f_packet);
+    void route(std::shared_ptr<AbstractPacket> f_packet);
 
   private:
     bool canRoute(QString f_route);

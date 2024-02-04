@@ -12,15 +12,15 @@ class PacketFactory
     ~PacketFactory() = delete;
 
     static bool canCreatePacket(QString f_header);
-    static AbstractPacket *createPacket(QByteArray f_data);
+    static std::shared_ptr<AbstractPacket> createPacket(QByteArray f_data);
 
-    template <typename T>
-    static void registerPacket(QString header);
+    template <class T, is_packet<T> = true>
+    static void registerPacket();
     static void registerPackets();
 
   private:
-    template <typename T>
-    static AbstractPacket *createInstance(QJsonValue f_data);
+    template <class T, is_packet<T> = true>
+    static std::shared_ptr<AbstractPacket> createInstance(QJsonValue f_data);
     inline static std::map<QString, AbstractPacket *(*)(QJsonValue)> builders;
 };
 

@@ -1,28 +1,35 @@
 #include "packetfactory.h"
 
-#include "assert.h"
+#include <QtAssert>
 
-bool PacketFactory::canCreatePacket(std::string f_header)
+bool PacketFactory::canCreatePacket(QString f_header)
 {
     return builders.count(f_header);
 }
 
-AbstractPacket *PacketFactory::createPacket(QByteArray f_data)
+std::shared_ptr<AbstractPacket> PacketFactory::createPacket(QByteArray f_data)
 {
+    return nullptr;
 }
 
 void PacketFactory::registerPackets()
 {
 }
 
-template <typename T>
-void PacketFactory::registerPacket(std::string header)
+template <class T, is_packet<T>>
+void PacketFactory::registerPacket()
 {
-    T packet;
-    assert(canCreatePacket(packet.header()) = false);
+    QString l_header = T().header();
+    Q_ASSERT(!builders.contains(l_header));
+    builders[l_header] = &createInstance<T>;
 }
 
-template <typename T>
-AbstractPacket *PacketFactory::createInstance(QJsonValue f_data)
+template <class T, is_packet<T>>
+std::shared_ptr<AbstractPacket> PacketFactory::createInstance(QJsonValue f_data)
 {
+    std::shared_ptr<T> l_packet = std::make_shared<T>();
+    if (l_packet.get()->fromJsonValue(f_data)) {
+        return l_packet;
+    }
+    return nullptr;
 }
