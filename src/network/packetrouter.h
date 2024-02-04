@@ -13,7 +13,7 @@ class PacketRouter
     PacketRouter();
 
     // Callbacks or signals?
-    // using Route = void (HVACRouter::*)(QJsonObject);
+    // using Route = void (PacketRouter::*)(AbstractPacket*);
     // std::map<QString, Route> routes;
 
     // std::map<std::string, std::function<void(AbstractPacket *)>> routes;
