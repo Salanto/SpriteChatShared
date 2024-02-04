@@ -3,7 +3,7 @@
 
 #include "abstractpacket.h"
 
-#include <string>
+#include <QString>
 
 class PacketFactory
 {
@@ -11,17 +11,17 @@ class PacketFactory
     PacketFactory() = delete;
     ~PacketFactory() = delete;
 
-    static bool canCreatePacket(std::string f_header);
+    static bool canCreatePacket(QString f_header);
     static AbstractPacket *createPacket(QByteArray f_data);
 
     template <typename T>
-    static void registerPacket(std::string header);
+    static void registerPacket(QString header);
     static void registerPackets();
 
   private:
     template <typename T>
     static AbstractPacket *createInstance(QJsonValue f_data);
-    inline static std::map<std::string, AbstractPacket *(*)(QJsonValue)> builders;
+    inline static std::map<QString, AbstractPacket *(*)(QJsonValue)> builders;
 };
 
 #endif // PACKETFACTORY_H

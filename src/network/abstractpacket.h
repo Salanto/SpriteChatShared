@@ -7,7 +7,7 @@
 class AbstractPacket
 {
   public:
-    virtual std::string header() const = 0;
+    virtual QString header() const = 0;
     virtual bool fromJsonValue(const QJsonValue &value) = 0;
     virtual QByteArray toJson() const = 0;
 };

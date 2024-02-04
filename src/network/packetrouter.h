@@ -3,21 +3,23 @@
 
 #include "abstractpacket.h"
 
-#include <functional>
+#include <QString>
 #include <map>
-#include <string>
 
 class PacketRouter
 {
+    using Route = std::function<void(AbstractPacket *)>;
+    using Routes = QList<Route>;
+
   public:
-    PacketRouter();
+    PacketRouter() = default;
 
-    // Callbacks or signals?
-    // using Route = void (PacketRouter::*)(AbstractPacket*);
-    // std::map<QString, Route> routes;
+    void registerRoute(QString f_identifier, Route f_route);
+    void route(AbstractPacket *f_packet);
 
-    // std::map<std::string, std::function<void(AbstractPacket *)>> routes;
-    // std::map<QString,
+  private:
+    bool canRoute(QString f_route);
+    std::map<QString, Routes> routes;
 };
 
 #endif // PACKETROUTER_H

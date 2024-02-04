@@ -19,7 +19,7 @@ template <typename T>
 void PacketFactory::registerPacket(std::string header)
 {
     T packet;
-    assert()
+    assert(canCreatePacket(packet.header()) = false);
 }
 
 template <typename T>
