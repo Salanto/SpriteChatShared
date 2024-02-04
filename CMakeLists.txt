@@ -14,6 +14,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 add_library(SpriteChatShared SHARED
     src/network/abstractpacket.h
     src/network/packetrouter.h src/network/packetrouter.cpp
+    src/network/packetfactory.h src/network/packetfactory.cpp
 )
 
 target_include_directories(SpriteChatShared
