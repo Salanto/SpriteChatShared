@@ -4,11 +4,6 @@
 #include <QJsonObject>
 #include <QString>
 
-class AbstractPacket;
-
-// template <class T>
-// using is_packet = std::enable_if<std::is_base_of_v<AbstractPacket, T> && std::is_default_constructible_v<T>>;
-
 class AbstractPacket
 {
   public:
