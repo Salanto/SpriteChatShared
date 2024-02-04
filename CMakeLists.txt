@@ -15,10 +15,12 @@ add_library(SpriteChatShared SHARED
     src/network/abstractpacket.h
     src/network/packetrouter.h src/network/packetrouter.cpp
     src/network/packetfactory.h src/network/packetfactory.cpp
+    src/network/packets/notificationpacket.h src/network/packets/notificationpacket.cpp
 )
 
 target_include_directories(SpriteChatShared
    PRIVATE src/network
+   PRIVATE src/network/packets
 )
 
 target_link_libraries(SpriteChatShared PRIVATE

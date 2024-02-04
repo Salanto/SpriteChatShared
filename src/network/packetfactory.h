@@ -14,14 +14,14 @@ class PacketFactory
     static bool canCreatePacket(QString f_header);
     static std::shared_ptr<AbstractPacket> createPacket(QByteArray f_data);
 
-    template <class T, is_packet<T> = true>
+    template <class T>
     static void registerPacket();
     static void registerPackets();
 
   private:
-    template <class T, is_packet<T> = true>
+    template <class T>
     static std::shared_ptr<AbstractPacket> createInstance(QJsonValue f_data);
-    inline static std::map<QString, AbstractPacket *(*)(QJsonValue)> builders;
+    inline static std::map<QString, std::shared_ptr<AbstractPacket> (*)(QJsonValue)> builders;
 };
 
 #endif // PACKETFACTORY_H

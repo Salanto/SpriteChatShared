@@ -1,4 +1,6 @@
 #include "packetfactory.h"
+#include "abstractpacket.h"
+#include "notificationpacket.h"
 
 #include <QtAssert>
 
@@ -14,9 +16,10 @@ std::shared_ptr<AbstractPacket> PacketFactory::createPacket(QByteArray f_data)
 
 void PacketFactory::registerPackets()
 {
+    registerPacket<NotificationPacket>();
 }
 
-template <class T, is_packet<T>>
+template <class T>
 void PacketFactory::registerPacket()
 {
     QString l_header = T().header();
@@ -24,7 +27,7 @@ void PacketFactory::registerPacket()
     builders[l_header] = &createInstance<T>;
 }
 
-template <class T, is_packet<T>>
+template <class T>
 std::shared_ptr<AbstractPacket> PacketFactory::createInstance(QJsonValue f_data)
 {
     std::shared_ptr<T> l_packet = std::make_shared<T>();
