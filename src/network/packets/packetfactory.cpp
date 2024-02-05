@@ -4,14 +4,17 @@
 
 #include <QtAssert>
 
-bool PacketFactory::canCreatePacket(QString f_header)
+bool PacketFactory::canCreatePacket(const QString &f_header)
 {
     return builders.count(f_header);
 }
 
-std::shared_ptr<AbstractPacket> PacketFactory::createPacket(QByteArray f_data)
+std::shared_ptr<AbstractPacket> PacketFactory::createPacket(const QString &f_header, const QJsonValue &f_data)
 {
-    return nullptr;
+    if (!canCreatePacket(f_header)) {
+        return std::shared_ptr<AbstractPacket>(nullptr);
+    }
+    return std::invoke(builders[f_header], f_data);
 }
 
 void PacketFactory::registerPackets()
@@ -28,11 +31,11 @@ void PacketFactory::registerPacket()
 }
 
 template <class T>
-std::shared_ptr<AbstractPacket> PacketFactory::createInstance(QJsonValue f_data)
+std::shared_ptr<AbstractPacket> PacketFactory::createInstance(const QJsonValue &f_data)
 {
     std::shared_ptr<T> l_packet = std::make_shared<T>();
     if (l_packet.get()->fromJsonValue(f_data)) {
         return l_packet;
     }
-    return nullptr;
+    return std::shared_ptr<AbstractPacket>(nullptr);
 }

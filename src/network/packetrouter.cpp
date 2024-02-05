@@ -11,7 +11,7 @@ void PacketRouter::registerRoute(QString f_identifier, Route f_route)
 
 void PacketRouter::route(std::shared_ptr<AbstractPacket> f_packet)
 {
-    if (canRoute(f_packet->header())) {
+    if (!canRoute(f_packet->header())) {
         qDebug() << "Unable to route packet with header" << f_packet->header();
         return;
     }

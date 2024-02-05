@@ -12,20 +12,22 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core WebSockets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core WebSockets)
 
 add_library(SpriteChatShared SHARED
-    src/network/abstractpacket.h
+    src/network/packets/abstractpacket.h
     src/network/packetrouter.h src/network/packetrouter.cpp
-    src/network/packetfactory.h src/network/packetfactory.cpp
+    src/network/packets/packetfactory.h src/network/packets/packetfactory.cpp
     src/network/packets/notificationpacket.h src/network/packets/notificationpacket.cpp
     src/datatypes/servertypes.h
     src/datatypes/sockettypes.h
     src/network/socket/socketinterface.h src/network/socket/socketinterface.cpp
     src/network/socket/serversocket.h src/network/socket/serversocket.cpp
+    src/network/serverclient.h src/network/serverclient.cpp
 )
 
 target_include_directories(SpriteChatShared
-   PRIVATE src/network
-   PRIVATE src/network/packets
-   PRIVATE src/datatypes
+    PRIVATE src/datatypes
+    PRIVATE src/network
+    PRIVATE src/network/packets
+    PRIVATE src/network/socket
 )
 
 target_link_libraries(SpriteChatShared PRIVATE

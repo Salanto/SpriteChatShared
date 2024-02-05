@@ -7,10 +7,15 @@ SocketInterface::SocketInterface(QObject *parent) :
 
 void SocketInterface::close()
 {
-    ws_socket->close(QWebSocketProtocol::CloseCodeNormal, "Socket disconnected.");
+    socket->close(QWebSocketProtocol::CloseCodeNormal, "Socket disconnected.");
+}
+
+void SocketInterface::close(QWebSocketProtocol::CloseCode f_code)
+{
+    socket->close(f_code);
 }
 
 void SocketInterface::write(QByteArray data)
 {
-    ws_socket->sendBinaryMessage(data);
+    socket->sendBinaryMessage(data);
 }

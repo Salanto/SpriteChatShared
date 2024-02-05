@@ -19,10 +19,11 @@ class SocketInterface : public QObject
     virtual void connect(QString hostname, int port, QString endpoint,
                          SocketTypes::SocketMode mode = SocketTypes::INSECURE) = 0;
     virtual void close();
+    virtual void close(QWebSocketProtocol::CloseCode f_code);
     virtual void write(QByteArray data);
 
   protected:
-    QWebSocket *ws_socket = nullptr;
+    QWebSocket *socket = nullptr;
 
   signals:
     void dataReceived(const QByteArray &message);

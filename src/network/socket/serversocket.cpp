@@ -5,14 +5,14 @@
 ServerSocket::ServerSocket(QObject *parent) :
     SocketInterface{parent}
 {
-    ws_socket = new QWebSocket(QSysInfo::machineHostName(), QWebSocketProtocol::VersionLatest, this);
-    QObject::connect(ws_socket, &QWebSocket::connected, this,
+    socket = new QWebSocket(QSysInfo::machineHostName(), QWebSocketProtocol::VersionLatest, this);
+    QObject::connect(socket, &QWebSocket::connected, this,
                      &ServerSocket::connected);
-    QObject::connect(ws_socket, &QWebSocket::disconnected, this,
+    QObject::connect(socket, &QWebSocket::disconnected, this,
                      &ServerSocket::disconnected);
-    QObject::connect(ws_socket, &QWebSocket::binaryMessageReceived, this,
+    QObject::connect(socket, &QWebSocket::binaryMessageReceived, this,
                      &ServerSocket::dataReceived);
-    QObject::connect(ws_socket, &QWebSocket::errorOccurred, this,
+    QObject::connect(socket, &QWebSocket::errorOccurred, this,
                      &ServerSocket::error);
 }
 
@@ -21,16 +21,16 @@ void ServerSocket::connect(QString hostname, int port, QString endpoint,
 {
     QUrl server_url;
     if (mode == SocketTypes::SocketMode::SECURE) {
-        QObject::connect(ws_socket, &QWebSocket::sslErrors, this,
+        QObject::connect(socket, &QWebSocket::sslErrors, this,
                          &ServerSocket::handleSslError);
-        QSslConfiguration ssl_config = ws_socket->sslConfiguration();
+        QSslConfiguration ssl_config = socket->sslConfiguration();
         if (ssl_config.caCertificates().size() == NO_CERTIFICATE) {
             qDebug() << "Unable to obtain SSL certificates. Certstore is empty.";
             // TODO : Try to load CA bundle from QRC for plattforms that may have
             // issues. (iOS & Android + Random Linux Distros.)
         }
         ssl_config.setProtocol(QSsl::TlsV1_2OrLater);
-        ws_socket->setSslConfiguration(ssl_config);
+        socket->setSslConfiguration(ssl_config);
         server_url = QUrl(QString("wss://%1:%2/%3")
                               .arg(hostname, QString::number(port), endpoint));
     }
@@ -41,7 +41,7 @@ void ServerSocket::connect(QString hostname, int port, QString endpoint,
     qDebug() << "Trying to connect to " << server_url;
     qDebug() << "Secure :" << mode;
 
-    ws_socket->open(server_url);
+    socket->open(server_url);
 }
 
 void ServerSocket::handleSslError(const QList<QSslError> errors)
@@ -50,5 +50,5 @@ void ServerSocket::handleSslError(const QList<QSslError> errors)
         qDebug() << "Encountered SSL error during connection: "
                  << error.errorString();
     }
-    ws_socket->close(QWebSocketProtocol::CloseCodeTlsHandshakeFailed);
+    socket->close(QWebSocketProtocol::CloseCodeTlsHandshakeFailed);
 }
