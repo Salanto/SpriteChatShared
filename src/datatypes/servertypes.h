@@ -1,13 +1,15 @@
 #ifndef SERVERTYPES_H
 #define SERVERTYPES_H
 
+#include "spritechatshared_global.h"
+
 #include <QObject>
 #include <QVersionNumber>
 
 namespace ServerTypes {
-    Q_NAMESPACE
+    Q_NAMESPACE_EXPORT(SPRITECHATSHARED_EXPORT)
 
-    struct CoordinatorServerData
+    struct SPRITECHATSHARED_EXPORT CoordinatorServerData
     {
         QString name;
         QString ip;
@@ -15,7 +17,7 @@ namespace ServerTypes {
         int wss_port;
     };
 
-    struct ServerInformation
+    struct SPRITECHATSHARED_EXPORT ServerInformation
     {
         QString app_name;
         QVersionNumber app_version;

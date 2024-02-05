@@ -1,12 +1,14 @@
 #ifndef SERVERCLIENT_H
 #define SERVERCLIENT_H
 
+#include "spritechatshared_global.h"
+
 #include <QObject>
 
 class ServerSocket;
 class PacketRouter;
 
-class ServerClient : public QObject
+class SPRITECHATSHARED_EXPORT ServerClient : public QObject
 {
     Q_OBJECT
 

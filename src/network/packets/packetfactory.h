@@ -2,10 +2,11 @@
 #define PACKETFACTORY_H
 
 #include "abstractpacket.h"
+#include "spritechatshared_global.h"
 
 #include <QString>
 
-class PacketFactory
+class SPRITECHATSHARED_EXPORT PacketFactory
 {
   public:
     PacketFactory() = delete;

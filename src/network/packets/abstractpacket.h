@@ -1,10 +1,12 @@
 #ifndef ABSTRACTPACKET_H
 #define ABSTRACTPACKET_H
 
+#include "spritechatshared_global.h"
+
 #include <QJsonObject>
 #include <QString>
 
-class AbstractPacket
+class SPRITECHATSHARED_EXPORT AbstractPacket
 {
   public:
     virtual ~AbstractPacket(){};

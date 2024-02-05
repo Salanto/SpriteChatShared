@@ -2,11 +2,12 @@
 #define PACKETROUTER_H
 
 #include "abstractpacket.h"
+#include "spritechatshared_global.h"
 
 #include <QString>
 #include <map>
 
-class PacketRouter
+class SPRITECHATSHARED_EXPORT PacketRouter
 {
     using Route = std::function<void(std::shared_ptr<AbstractPacket>)>;
     using Routes = QList<Route>;

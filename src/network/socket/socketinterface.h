@@ -2,13 +2,14 @@
 #define SOCKETINTERFACE_H
 
 #include "sockettypes.h"
+#include "spritechatshared_global.h"
 
 #include <QByteArray>
 #include <QObject>
 #include <QString>
 #include <QtWebSockets/QWebSocket>
 
-class SocketInterface : public QObject
+class SPRITECHATSHARED_EXPORT SocketInterface : public QObject
 {
     Q_OBJECT
 

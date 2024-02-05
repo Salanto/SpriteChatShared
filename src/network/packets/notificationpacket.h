@@ -1,14 +1,15 @@
 #ifndef NOTIFICATIONPACKET_H
 #define NOTIFICATIONPACKET_H
 
-#include <abstractpacket.h>
+#include "abstractpacket.h"
+#include "spritechatshared_global.h"
 
 #include <QByteArray>
 #include <QJsonValue>
 #include <QString>
 #include <QStringList>
 
-class NotificationPacket : public AbstractPacket
+class SPRITECHATSHARED_EXPORT NotificationPacket : public AbstractPacket
 {
   public:
     NotificationPacket() = default;

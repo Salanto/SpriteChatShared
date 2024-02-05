@@ -2,8 +2,9 @@
 #define SERVERSOCKET_H
 
 #include "socketinterface.h"
+#include "spritechatshared_global.h"
 
-class ServerSocket : public SocketInterface
+class SPRITECHATSHARED_EXPORT ServerSocket : public SocketInterface
 {
     Q_OBJECT
     Q_DISABLE_COPY_MOVE(ServerSocket)
