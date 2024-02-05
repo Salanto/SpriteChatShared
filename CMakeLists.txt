@@ -12,6 +12,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core WebSockets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core WebSockets)
 
 add_library(SpriteChatShared SHARED
+    spritechatshared_global.h
     src/network/packets/abstractpacket.h
     src/network/packetrouter.h src/network/packetrouter.cpp
     src/network/packets/packetfactory.h src/network/packets/packetfactory.cpp
@@ -34,7 +35,14 @@ target_link_libraries(SpriteChatShared PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::WebSockets
 )
-set_target_properties(SpriteChatShared PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_CURRENT_LIST_DIR}/lib>
-        RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_CURRENT_LIST_DIR}/lib>
+
+target_compile_definitions(SpriteChatShared PRIVATE
+    SPRITECHATSHARED_LIBRARY TRUE
 )
+
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set_target_properties(SpriteChatShared PROPERTIES
+            LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_CURRENT_LIST_DIR}/lib>
+            RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_CURRENT_LIST_DIR}/lib>
+    )
+endif()
