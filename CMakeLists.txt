@@ -42,10 +42,7 @@ target_compile_definitions(SpriteChatShared PRIVATE
     SPRITECHATSHARED_LIBRARY TRUE
 )
 
-if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-
-    set_target_properties(SpriteChatShared PROPERTIES
-            LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_CURRENT_LIST_DIR}/lib>
-            RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_CURRENT_LIST_DIR}/lib>
-    )
-endif()
+set_target_properties(SpriteChatShared PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/bin>
+    RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/bin>
+)
