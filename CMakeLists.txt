@@ -25,11 +25,11 @@ add_library(SpriteChatShared SHARED
 )
 
 target_include_directories(SpriteChatShared
-    PRIVATE src
-    PRIVATE src/datatypes
-    PRIVATE src/network
-    PRIVATE src/network/packets
-    PRIVATE src/network/socket
+    PUBLIC src
+    PUBLIC src/datatypes
+    PUBLIC src/network
+    PUBLIC src/network/packets
+    PUBLIC src/network/socket
 )
 
 target_link_libraries(SpriteChatShared PRIVATE
