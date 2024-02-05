@@ -37,11 +37,12 @@ target_link_libraries(SpriteChatShared PRIVATE
     Qt${QT_VERSION_MAJOR}::WebSockets
 )
 
-if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
-    target_compile_definitions(SpriteChatShared PRIVATE
-        SPRITECHATSHARED_LIBRARY TRUE
-    )
+target_compile_definitions(SpriteChatShared PRIVATE
+    SPRITECHATSHARED_LIBRARY TRUE
+)
+
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 
     set_target_properties(SpriteChatShared PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_CURRENT_LIST_DIR}/lib>
