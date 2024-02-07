@@ -2,10 +2,19 @@
 
 #include <QDebug>
 
-void PacketRouter::registerRoute(QString f_identifier, Route f_route)
+void PacketRouter::registerListener(QString f_identifier, QString f_listener, Route f_route)
 {
+    qDebug() << "Adding listener" << f_listener << "for packet" << f_identifier;
     Routes l_routes = routes[f_identifier];
-    l_routes.append(f_route);
+    l_routes.insert(f_listener, f_route);
+    routes[f_identifier] = l_routes;
+}
+
+void PacketRouter::removeListener(QString f_identifier, QString f_listener)
+{
+    qDebug() << "Removing listener" << f_listener << "for packet" << f_identifier;
+    Routes l_routes = routes[f_identifier];
+    l_routes.remove(f_listener);
     routes[f_identifier] = l_routes;
 }
 
@@ -17,7 +26,7 @@ void PacketRouter::route(std::shared_ptr<AbstractPacket> f_packet)
     }
 
     Routes l_routes = routes[f_packet->header()];
-    for (Route route : l_routes) {
+    for (Route route : qAsConst(l_routes)) {
         std::invoke(route, f_packet);
     };
 }

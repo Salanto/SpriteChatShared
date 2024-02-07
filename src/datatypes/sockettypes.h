@@ -8,10 +8,10 @@
 namespace SocketTypes {
     Q_NAMESPACE_EXPORT(SPRITECHATSHARED_EXPORT)
 
-    enum SocketMode
+    enum SocketMode : bool
     {
-        INSECURE,
-        SECURE
+        INSECURE = false,
+        SECURE = true
     };
     Q_ENUM_NS(SocketMode);
 }

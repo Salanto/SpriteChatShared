@@ -37,7 +37,6 @@ target_link_libraries(SpriteChatShared PRIVATE
     Qt${QT_VERSION_MAJOR}::WebSockets
 )
 
-
 target_compile_definitions(SpriteChatShared PRIVATE
     SPRITECHATSHARED_LIBRARY TRUE
 )

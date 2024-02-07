@@ -10,12 +10,13 @@
 class SPRITECHATSHARED_EXPORT PacketRouter
 {
     using Route = std::function<void(std::shared_ptr<AbstractPacket>)>;
-    using Routes = QList<Route>;
+    using Routes = QMap<QString, Route>;
 
   public:
     PacketRouter() = default;
 
-    void registerRoute(QString f_identifier, Route f_route);
+    void registerListener(QString f_identifier, QString f_listener, Route f_route);
+    void removeListener(QString f_identifier, QString f_listener);
     void route(std::shared_ptr<AbstractPacket> f_packet);
 
   private:
