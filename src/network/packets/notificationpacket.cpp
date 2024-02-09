@@ -21,7 +21,7 @@ QByteArray NotificationPacket::toJson() const
 {
     QJsonObject l_data;
     l_data["header"] = header();
-    l_data["data"] = QJsonArray::fromStringList(messages);
+    l_data["data"] = QJsonArray::fromStringList(notifications);
 
     return QJsonDocument(l_data).toJson(QJsonDocument::Compact);
 }

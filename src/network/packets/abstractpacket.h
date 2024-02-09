@@ -3,7 +3,7 @@
 
 #include "spritechatshared_global.h"
 
-#include <QJsonObject>
+#include <QJsonValue>
 #include <QString>
 
 class SPRITECHATSHARED_EXPORT AbstractPacket
