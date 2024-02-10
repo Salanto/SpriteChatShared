@@ -1,22 +1,38 @@
 #include "selectmusicpacket.h"
 
-SelectMusicPacket::SelectMusicPacket()
-{
-}
+#include <QJsonDocument>
+#include <QJsonObject>
 
 QString SelectMusicPacket::header() const
 {
-    return "SELECT_MUSIC";
+    return "SELECTMUSIC";
 }
 
 bool SelectMusicPacket::fromJsonValue(const QJsonValue &value)
 {
-    return false;
+    if (!value.isObject()) {
+        qDebug() << "Unable to parse SelectMusicPacket. Body is not object.";
+        return false;
+    }
+
+    QJsonObject l_data = value.toObject();
+    music_channel = l_data["channel"].toInt(0);
+    song_name = l_data["songname"].toString();
+    behaviour_flags = l_data["flags"].toVariant().value<MusicTypes::MusicFlags>();
+    return true;
 }
 
 QByteArray SelectMusicPacket::toJson() const
 {
-    return QByteArray();
+    QJsonObject l_data;
+    l_data["channel"] = music_channel;
+    l_data["songname"] = song_name;
+    l_data["flags"] = behaviour_flags.toInt();
+
+    QJsonObject l_body;
+    l_body["header"] = header();
+    l_body["data"] = l_data;
+    return QJsonDocument(l_body).toJson(QJsonDocument::Compact);
 }
 
 int SelectMusicPacket::channel() const

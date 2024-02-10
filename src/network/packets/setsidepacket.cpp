@@ -1,8 +1,7 @@
 #include "setsidepacket.h"
 
-SetSidePacket::SetSidePacket()
-{
-}
+#include <QJsonDocument>
+#include <QJsonObject>
 
 QString SetSidePacket::header() const
 {
@@ -11,12 +10,25 @@ QString SetSidePacket::header() const
 
 bool SetSidePacket::fromJsonValue(const QJsonValue &value)
 {
-    return false;
+    if (!value.isObject()) {
+        qDebug() << "Unable to parse SetSidePacket. Body is not object";
+        return false;
+    }
+
+    QJsonObject l_data = value.toObject();
+    requested_side = l_data["side"].toString("witness");
+    return true;
 }
 
 QByteArray SetSidePacket::toJson() const
 {
-    return QByteArray();
+    QJsonObject l_data;
+    l_data["side"] = requested_side;
+
+    QJsonObject l_body;
+    l_body["header"] = header();
+    l_body["data"] = l_data;
+    return QJsonDocument(l_body).toJson(QJsonDocument::Compact);
 }
 
 QString SetSidePacket::side() const

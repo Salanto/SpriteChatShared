@@ -1,8 +1,7 @@
 #include "hellopacket.h"
 
-HelloPacket::HelloPacket()
-{
-}
+#include <QJsonDocument>
+#include <QJsonObject>
 
 QString HelloPacket::header() const
 {
@@ -11,12 +10,29 @@ QString HelloPacket::header() const
 
 bool HelloPacket::fromJsonValue(const QJsonValue &value)
 {
-    return false;
+    if (!value.isObject()) {
+        qDebug() << "Unable to parse HelloPacket. Body is not object.";
+        return false;
+    }
+
+    QJsonObject l_data = value.toObject();
+    application_name = l_data["application"].toString("UNKNOWN");
+    application_version = QVersionNumber::fromString(l_data["version"].toString("0.0.0"));
+    client_identifier = l_data["identifier"].toString("INVALID");
+    return true;
 }
 
 QByteArray HelloPacket::toJson() const
 {
-    return QByteArray();
+    QJsonObject l_data;
+    l_data["application"] = application_name;
+    l_data["version"] = application_version.toString();
+    l_data["identifier"] = client_identifier;
+
+    QJsonObject l_body;
+    l_body["header"] = header();
+    l_body["data"] = l_data;
+    return QJsonDocument(l_body).toJson(QJsonDocument::Compact);
 }
 
 void HelloPacket::setApplicationName(const QString &f_app_name)

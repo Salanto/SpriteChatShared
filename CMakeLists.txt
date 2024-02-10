@@ -27,14 +27,14 @@ add_library(SpriteChatShared SHARED
     src/network/packets/hellopacket.h src/network/packets/hellopacket.cpp
     src/network/packets/charlistpacket.h src/network/packets/charlistpacket.cpp
     src/network/packets/charlisttakenpacket.h src/network/packets/charlisttakenpacket.cpp
-    src/network/packets/selectcharacterpacket.h src/network/packets/selectcharacterpacket.cpp
     src/network/packets/characterpacket.h src/network/packets/characterpacket.cpp
+
     src/datatypes/musictypes.h
     src/network/packets/selectmusicpacket.h src/network/packets/selectmusicpacket.cpp
     src/network/packets/musicpacket.h src/network/packets/musicpacket.cpp
     src/network/packets/locationlistpacket.h src/network/packets/locationlistpacket.cpp
     src/datatypes/areatypes.h
-    src/network/packets/selectlocationpacket.h src/network/packets/selectlocationpacket.cpp
+    src/network/packets/locationpacket.h src/network/packets/locationpacket.cpp
     src/network/packets/backgroundpacket.h src/network/packets/backgroundpacket.cpp
     src/network/packets/sidelistpacket.h src/network/packets/sidelistpacket.cpp
     src/network/packets/setsidepacket.h src/network/packets/setsidepacket.cpp
@@ -42,6 +42,7 @@ add_library(SpriteChatShared SHARED
     src/datatypes/animationtypes.h
     src/network/packets/viewportpacket.h src/network/packets/viewportpacket.cpp
     src/viewport/abstractanimationevent.h
+    src/datatypes/areatypes.cpp
 
 
 )

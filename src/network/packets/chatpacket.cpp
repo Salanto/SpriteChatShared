@@ -1,8 +1,7 @@
 #include "chatpacket.h"
 
-ChatPacket::ChatPacket()
-{
-}
+#include <QJsonDocument>
+#include <QJsonObject>
 
 QString ChatPacket::header() const
 {
@@ -11,12 +10,30 @@ QString ChatPacket::header() const
 
 bool ChatPacket::fromJsonValue(const QJsonValue &value)
 {
-    return false;
+    if (!value.isObject()) {
+        qDebug() << "Unable to parse ChatPacket. Body is not object.";
+        return false;
+    }
+
+    QJsonObject l_data = value.toObject();
+    message_sender = l_data["sender"].toString();
+    ooc_message = l_data["messager"].toString();
+    sender_color = AreaTypes::RGB().fromString(l_data["color"].toString("255,255,255"));
+
+    return true;
 }
 
 QByteArray ChatPacket::toJson() const
 {
-    return QByteArray();
+    QJsonObject l_data;
+    l_data["sender"] = message_sender;
+    l_data["message"] = ooc_message;
+    l_data["color"] = sender_color.toString();
+
+    QJsonObject l_body;
+    l_body["header"] = header();
+    l_body["data"] = l_data;
+    return QJsonDocument(l_body).toJson(QJsonDocument::Compact);
 }
 
 QString ChatPacket::message() const
@@ -39,12 +56,12 @@ void ChatPacket::setSender(const QString &f_sender)
     message_sender = f_sender;
 }
 
-AreaTypes::RGB ChatPacket::colour() const
+AreaTypes::RGB ChatPacket::color() const
 {
-    return sender_colour;
+    return sender_color;
 }
 
-void ChatPacket::setColour(const AreaTypes::RGB &f_colour)
+void ChatPacket::setColor(const AreaTypes::RGB &f_colour)
 {
-    sender_colour = f_colour;
+    sender_color = f_colour;
 }

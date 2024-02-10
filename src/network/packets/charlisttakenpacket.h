@@ -6,7 +6,7 @@
 class SPRITECHATSHARED_EXPORT CharlistTakenPacket : public CharlistPacket
 {
   public:
-    CharlistTakenPacket();
+    CharlistTakenPacket() = default;
 
     QString header() const override;
 };

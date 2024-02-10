@@ -19,7 +19,7 @@ class SPRITECHATSHARED_EXPORT PacketFactory
     static void registerPacket();
     static void registerPackets();
 
-  private:
+  protected:
     template <class T>
     static std::shared_ptr<AbstractPacket> createInstance(const QJsonValue &f_data);
     inline static std::map<QString, std::shared_ptr<AbstractPacket> (*)(const QJsonValue &)> builders;

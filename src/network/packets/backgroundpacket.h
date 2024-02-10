@@ -6,7 +6,7 @@
 class SPRITECHATSHARED_EXPORT BackgroundPacket : public AbstractPacket
 {
   public:
-    BackgroundPacket();
+    BackgroundPacket() = default;
 
     QString header() const override;
     bool fromJsonValue(const QJsonValue &value) override;
@@ -18,7 +18,7 @@ class SPRITECHATSHARED_EXPORT BackgroundPacket : public AbstractPacket
     bool reset() const;
     void setReset(const bool &f_bool);
 
-  private:
+  protected:
     QString background_name = "default";
     bool reset_background = false;
 };

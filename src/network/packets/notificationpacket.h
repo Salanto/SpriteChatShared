@@ -13,7 +13,6 @@ class SPRITECHATSHARED_EXPORT NotificationPacket : public AbstractPacket
 {
   public:
     NotificationPacket() = default;
-    ~NotificationPacket() = default;
 
     QString header() const override;
     bool fromJsonValue(const QJsonValue &value) override;
@@ -22,7 +21,7 @@ class SPRITECHATSHARED_EXPORT NotificationPacket : public AbstractPacket
     void setMessages(const QStringList &f_messages);
     QStringList messages() const;
 
-  private:
+  protected:
     QStringList notifications;
 };
 

@@ -9,11 +9,27 @@ namespace AreaTypes {
     Q_NAMESPACE_EXPORT(SPRITECHATSHARED_EXPORT)
 
     // RGB classes are QtGUI...
-    struct SPRITECHATSHARED_EXPORT RGB
+    class SPRITECHATSHARED_EXPORT RGB
     {
-        int red;
-        int green;
-        int blue;
+      public:
+        RGB() = default;
+
+        RGB fromString(const QString &value);
+        QString toString() const;
+
+        int red() const;
+        void setRed(const int &value);
+
+        int green() const;
+        void setGreen(const int &value);
+
+        int blue() const;
+        void setBlue(const int &value);
+
+      private:
+        int c_red = 255;
+        int c_green = 255;
+        int c_blue = 255;
     };
 
     struct SPRITECHATSHARED_EXPORT LocationMetadata
@@ -21,7 +37,7 @@ namespace AreaTypes {
         int id;
         int playercount;
         QString event;
-        RGB rgb_colour;
+        RGB rgb_color;
         QString background;
         QString description;
     };

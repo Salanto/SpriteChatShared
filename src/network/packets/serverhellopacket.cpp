@@ -1,22 +1,57 @@
 #include "serverhellopacket.h"
 
-ServerHelloPacket::ServerHelloPacket()
-{
-}
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 QString ServerHelloPacket::header() const
 {
-    return "SERVER_HELLO";
+    return "SERVERHELLO";
 }
 
 bool ServerHelloPacket::fromJsonValue(const QJsonValue &value)
 {
-    return false;
+    if (!value.isObject()) {
+        qDebug() << "Unable to parse ServerHelloPacket. Body is not object.";
+        return false;
+    }
+
+    QJsonObject l_data = value.toObject();
+    server_app = l_data["application"].toString("UNKNOWN");
+    server_version = QVersionNumber::fromString(l_data["version"].toString("0.0.0"));
+    server_name = l_data["name"].toString("UNKNOWN");
+    server_description = l_data["description"].toString("UNKNOWN");
+    server_playercount = l_data["playercount"].toInt(0);
+    asset_url = l_data["url"].toString();
+
+    QJsonValue l_package_array = l_data["packages"];
+    if (!l_package_array.isArray()) {
+        qDebug() << "Unable to parse packages. Packages are not array.";
+        return false;
+    }
+
+    QJsonArray l_packages = l_package_array.toArray();
+    for (const QVariant &l_package : l_packages.toVariantList()) {
+        suggested_packages.append(l_package.toString());
+    }
+    return true;
 }
 
 QByteArray ServerHelloPacket::toJson() const
 {
-    return QByteArray();
+    QJsonObject l_data;
+    l_data["application"] = server_app;
+    l_data["version"] = server_version.toString();
+    l_data["name"] = server_name;
+    l_data["description"] = server_description;
+    l_data["playercount"] = server_playercount;
+    l_data["url"] = asset_url;
+    l_data["packages"] = QJsonArray::fromStringList(suggested_packages);
+
+    QJsonObject l_body;
+    l_body["header"] = header();
+    l_body["data"] = l_data;
+    return QJsonDocument(l_body).toJson(QJsonDocument::Compact);
 }
 
 void ServerHelloPacket::setAppName(const QString &f_app_name)
@@ -79,12 +114,12 @@ QString ServerHelloPacket::assetUrl() const
     return asset_url;
 }
 
-void ServerHelloPacket::setPackages(const QList<int> &f_packages)
+void ServerHelloPacket::setPackages(const QStringList &f_packages)
 {
     suggested_packages = f_packages;
 }
 
-QList<int> ServerHelloPacket::packages() const
+QStringList ServerHelloPacket::packages() const
 {
     return suggested_packages;
 }

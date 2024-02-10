@@ -7,7 +7,7 @@
 class SPRITECHATSHARED_EXPORT ChatPacket : public AbstractPacket
 {
   public:
-    ChatPacket();
+    ChatPacket() = default;
 
     QString header() const override;
     bool fromJsonValue(const QJsonValue &value) override;
@@ -19,13 +19,13 @@ class SPRITECHATSHARED_EXPORT ChatPacket : public AbstractPacket
     QString sender() const;
     void setSender(const QString &f_sender);
 
-    AreaTypes::RGB colour() const;
-    void setColour(const AreaTypes::RGB &f_colour);
+    AreaTypes::RGB color() const;
+    void setColor(const AreaTypes::RGB &f_colour);
 
-  private:
+  protected:
     QString ooc_message;
     QString message_sender;
-    AreaTypes::RGB sender_colour;
+    AreaTypes::RGB sender_color;
 };
 
 #endif // CHATPACKET_H

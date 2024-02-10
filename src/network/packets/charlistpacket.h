@@ -6,7 +6,7 @@
 class SPRITECHATSHARED_EXPORT CharlistPacket : public AbstractPacket
 {
   public:
-    CharlistPacket();
+    CharlistPacket() = default;
 
     virtual QString header() const override;
     bool fromJsonValue(const QJsonValue &value) override;
@@ -15,7 +15,7 @@ class SPRITECHATSHARED_EXPORT CharlistPacket : public AbstractPacket
     void setCharacters(const QStringList &f_characters);
     QStringList characters() const;
 
-  private:
+  protected:
     QStringList charlist;
 };
 

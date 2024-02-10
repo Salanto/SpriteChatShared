@@ -1,6 +1,10 @@
 #include "musicpacket.h"
 
-MusicPacket::MusicPacket()
+#include <QJsonDocument>
+#include <QJsonObject>
+
+MusicPacket::MusicPacket() :
+    SelectMusicPacket()
 {
 }
 
@@ -11,22 +15,32 @@ QString MusicPacket::header() const
 
 bool MusicPacket::fromJsonValue(const QJsonValue &value)
 {
-    return false;
+    if (!value.isObject()) {
+        qDebug() << "Unable to parse MusicPacket. Body is not object.";
+        return false;
+    }
+
+    QJsonObject l_data = value.toObject();
+    displayname = l_data["displayname"].toString();
+    music_channel = l_data["channel"].toInt(0);
+    song_name = l_data["songname"].toString();
+    behaviour_flags = l_data["flags"].toVariant().value<MusicTypes::MusicFlags>();
+
+    return true;
 }
 
 QByteArray MusicPacket::toJson() const
 {
-    return QByteArray();
-}
+    QJsonObject l_data;
+    l_data["displayname"] = displayname;
+    l_data["channel"] = music_channel;
+    l_data["songname"] = song_name;
+    l_data["flags"] = behaviour_flags.toInt();
 
-QString MusicPacket::character() const
-{
-    return player_character;
-}
-
-void MusicPacket::setCharacter(const QString &f_character)
-{
-    player_character = f_character;
+    QJsonObject l_body;
+    l_body["header"] = header();
+    l_body["data"] = l_data;
+    return QJsonDocument(l_body).toJson(QJsonDocument::Compact);
 }
 
 QString MusicPacket::name() const

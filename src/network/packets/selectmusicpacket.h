@@ -7,7 +7,7 @@
 class SPRITECHATSHARED_EXPORT SelectMusicPacket : public AbstractPacket
 {
   public:
-    SelectMusicPacket();
+    SelectMusicPacket() = default;
 
     virtual QString header() const override;
     bool fromJsonValue(const QJsonValue &value) override;
@@ -22,7 +22,7 @@ class SPRITECHATSHARED_EXPORT SelectMusicPacket : public AbstractPacket
     MusicTypes::MusicFlags flags() const;
     void setFlags(const MusicTypes::MusicFlags &f_flags);
 
-  private:
+  protected:
     int music_channel;
     QString song_name;
     MusicTypes::MusicFlags behaviour_flags;

@@ -8,7 +8,7 @@
 class SPRITECHATSHARED_EXPORT HelloPacket : public AbstractPacket
 {
   public:
-    HelloPacket();
+    HelloPacket() = default;
 
     QString header() const override;
     bool fromJsonValue(const QJsonValue &value) override;
@@ -23,7 +23,7 @@ class SPRITECHATSHARED_EXPORT HelloPacket : public AbstractPacket
     void setIdentifier(const QString &f_identifier);
     QString identifier() const;
 
-  private:
+  protected:
     QString application_name;
     QVersionNumber application_version;
     QString client_identifier;

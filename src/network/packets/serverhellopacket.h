@@ -9,7 +9,7 @@
 class SPRITECHATSHARED_EXPORT ServerHelloPacket : public AbstractPacket
 {
   public:
-    ServerHelloPacket();
+    ServerHelloPacket() = default;
 
     QString header() const override;
     bool fromJsonValue(const QJsonValue &value) override;
@@ -33,17 +33,17 @@ class SPRITECHATSHARED_EXPORT ServerHelloPacket : public AbstractPacket
     void setAssetUrl(const QString &f_asset_url);
     QString assetUrl() const;
 
-    void setPackages(const QList<int> &f_packages);
-    QList<int> packages() const;
+    void setPackages(const QStringList &f_packages);
+    QStringList packages() const;
 
-  private:
+  protected:
     QString server_app;
     QVersionNumber server_version;
     QString server_name;
     QString server_description;
     int server_playercount;
     QString asset_url;
-    QList<int> suggested_packages;
+    QStringList suggested_packages;
 };
 
 #endif // SERVERHELLOPACKET_H

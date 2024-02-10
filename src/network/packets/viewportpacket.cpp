@@ -1,9 +1,5 @@
 #include "viewportpacket.h"
 
-ViewportPacket::ViewportPacket()
-{
-}
-
 QString ViewportPacket::header() const
 {
     return "VIEWPORT";

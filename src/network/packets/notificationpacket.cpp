@@ -12,7 +12,12 @@ QString NotificationPacket::header() const
 bool NotificationPacket::fromJsonValue(const QJsonValue &value)
 {
     if (!value.isArray()) {
+        qDebug() << "Unable to parse NotificationPacket. Body is not array.";
         return false;
+    }
+    QJsonArray l_data = value.toArray();
+    for (const QVariant &l_notification : l_data.toVariantList()) {
+        notifications.append(l_notification.toString());
     }
     return true;
 }

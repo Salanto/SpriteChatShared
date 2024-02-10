@@ -7,7 +7,7 @@
 class SPRITECHATSHARED_EXPORT ViewportPacket : AbstractPacket
 {
   public:
-    ViewportPacket();
+    ViewportPacket() = default;
 
     QString header() const override;
     bool fromJsonValue(const QJsonValue &value) override;
@@ -22,7 +22,7 @@ class SPRITECHATSHARED_EXPORT ViewportPacket : AbstractPacket
     QList<AbstractAnimationEvent *> events() const;
     void setEvents(const QList<AbstractAnimationEvent *> &f_events);
 
-  private:
+  protected:
     QString displayname;
     QString character_side;
     QList<AbstractAnimationEvent *> ic_events;

@@ -1,8 +1,7 @@
 #include "backgroundpacket.h"
 
-BackgroundPacket::BackgroundPacket()
-{
-}
+#include <QJsonDocument>
+#include <QJsonObject>
 
 QString BackgroundPacket::header() const
 {
@@ -11,12 +10,27 @@ QString BackgroundPacket::header() const
 
 bool BackgroundPacket::fromJsonValue(const QJsonValue &value)
 {
-    return false;
+    if (!value.isObject()) {
+        qDebug() << "Unable to parse BackgroundPacket. Body is not object.";
+        return false;
+    }
+
+    QJsonObject l_data = value.toObject();
+    background_name = l_data["name"].toString("default");
+    reset_background = l_data["reset"].toBool(false);
+    return true;
 }
 
 QByteArray BackgroundPacket::toJson() const
 {
-    return QByteArray();
+    QJsonObject l_data;
+    l_data["name"] = background_name;
+    l_data["reset"] = reset_background;
+
+    QJsonObject l_body;
+    l_body["header"] = header();
+    l_body["data"] = l_data;
+    return QJsonDocument(l_body).toJson(QJsonDocument::Compact);
 }
 
 QString BackgroundPacket::background() const

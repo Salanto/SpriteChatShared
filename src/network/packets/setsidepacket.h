@@ -6,7 +6,7 @@
 class SetSidePacket : public AbstractPacket
 {
   public:
-    SetSidePacket();
+    SetSidePacket() = default;
 
     virtual QString header() const;
     virtual bool fromJsonValue(const QJsonValue &value);
@@ -15,7 +15,7 @@ class SetSidePacket : public AbstractPacket
     QString side() const;
     void setSide(const QString &f_side);
 
-  private:
+  protected:
     QString requested_side;
 };
 

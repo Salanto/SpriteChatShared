@@ -1,12 +1,12 @@
-#ifndef SELECTLOCATIONPACKET_H
-#define SELECTLOCATIONPACKET_H
+#ifndef LOCATIONPACKET_H
+#define LOCATIONPACKET_H
 
 #include "abstractpacket.h"
 
-class SPRITECHATSHARED_EXPORT SelectLocationPacket : public AbstractPacket
+class SPRITECHATSHARED_EXPORT LocationPacket : public AbstractPacket
 {
   public:
-    SelectLocationPacket();
+    LocationPacket() = default;
 
     QString header() const override;
     bool fromJsonValue(const QJsonValue &value) override;
@@ -18,9 +18,9 @@ class SPRITECHATSHARED_EXPORT SelectLocationPacket : public AbstractPacket
     int location() const;
     void setLocation(const int &f_location);
 
-  private:
+  protected:
     int area_index;
     int location_index;
 };
 
-#endif // SELECTLOCATIONPACKET_H
+#endif // LOCATIONPACKET_H
