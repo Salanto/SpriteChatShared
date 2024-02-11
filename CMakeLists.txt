@@ -9,8 +9,12 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core WebSockets)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core WebSockets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core WebSockets)
+
+if (Qt6_VERSION VERSION_LESS 6.5)
+    message(FATAL_ERROR "This project only works with Qt 6.5 or higher!")
+endif()
 
 add_library(SpriteChatShared SHARED
     src/spritechatshared_global.h
