@@ -9,7 +9,7 @@ class QNetworkAccessManager;
 class QNetworkReply;
 class QTmer;
 
-class CoordinatorClient : public QObject
+class SPRITECHATSHARED_EXPORT CoordinatorClient : public QObject
 {
     Q_OBJECT
 
