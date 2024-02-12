@@ -20,11 +20,6 @@ void PacketRouter::removeListener(QString f_identifier, QString f_listener)
 
 void PacketRouter::route(std::shared_ptr<AbstractPacket> f_packet)
 {
-    if (!canRoute(f_packet->header())) {
-        qDebug() << "Unable to route packet with header" << f_packet->header();
-        return;
-    }
-
     Routes l_routes = routes[f_packet->header()];
     for (Route route : qAsConst(l_routes)) {
         std::invoke(route, f_packet);

@@ -14,10 +14,12 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
 
   public:
     explicit ServerClient(QObject *parent = nullptr);
+    ~ServerClient();
 
     void setSocket(ServerSocket *f_socket);
     void setRouter(PacketRouter *f_router);
     void freeSocket();
+    void freeRouter();
 
   private slots:
     void handleServerMessage(const QByteArray &f_message);

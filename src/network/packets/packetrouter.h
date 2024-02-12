@@ -18,9 +18,9 @@ class SPRITECHATSHARED_EXPORT PacketRouter
     void registerListener(QString f_identifier, QString f_listener, Route f_route);
     void removeListener(QString f_identifier, QString f_listener);
     void route(std::shared_ptr<AbstractPacket> f_packet);
+    bool canRoute(QString f_route);
 
   private:
-    bool canRoute(QString f_route);
     std::map<QString, Routes> routes;
 };
 

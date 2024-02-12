@@ -13,27 +13,41 @@ ServerClient::ServerClient(QObject *parent) :
 {
 }
 
+ServerClient::~ServerClient()
+{
+    freeSocket();
+    freeRouter();
+}
+
 void ServerClient::setSocket(ServerSocket *f_socket)
 {
     freeSocket();
     socket = f_socket;
+    connect(socket, &ServerSocket::dataReceived, this, &ServerClient::handleServerMessage);
 }
 
 void ServerClient::setRouter(PacketRouter *f_router)
 {
-    if (router) {
-        delete router;
-        router = nullptr;
-    }
+    freeRouter();
     router = f_router;
 }
 
 void ServerClient::freeSocket()
 {
     if (socket) {
+        disconnect(socket, &ServerSocket::dataReceived, this, &ServerClient::handleServerMessage);
         socket->close();
         socket->deleteLater();
         socket = nullptr;
+    }
+}
+
+void ServerClient::freeRouter()
+{
+
+    if (router) {
+        delete router;
+        router = nullptr;
     }
 }
 
@@ -62,8 +76,12 @@ void ServerClient::handleServerMessage(const QByteArray &f_message)
     }
 
     QString l_header = obj["header"].toString();
-    QJsonValue l_data = obj["data"];
+    if (!router->canRoute(l_header)) {
+        qDebug() << "Unable to route packet with header" << l_header;
+        return;
+    }
 
+    QJsonValue l_data = obj["data"];
     std::shared_ptr<AbstractPacket> l_packet = PacketFactory::createPacket(l_header, l_data);
     if (l_packet.get() == nullptr) {
         qDebug() << "Constructed packet is not valid or no constructor is available.";
