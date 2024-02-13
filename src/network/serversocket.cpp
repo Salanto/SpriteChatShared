@@ -3,7 +3,7 @@
 #include <QSysInfo>
 
 ServerSocket::ServerSocket(QObject *parent) :
-    SocketInterface{parent}
+    QObject{parent}
 {
     socket = new QWebSocket(QSysInfo::machineHostName(), QWebSocketProtocol::VersionLatest, this);
     QObject::connect(socket, &QWebSocket::connected, this,
@@ -27,7 +27,7 @@ void ServerSocket::connect(QString hostname, int port, QString endpoint,
         if (ssl_config.caCertificates().size() == NO_CERTIFICATE) {
             qDebug() << "Unable to obtain SSL certificates. Certstore is empty.";
             // TODO : Try to load CA bundle from QRC for plattforms that may have
-            // issues. (iOS & Android + Random Linux Distros.)
+            // issues. (Random Linux Distros.)
         }
         ssl_config.setProtocol(QSsl::TlsV1_2OrLater);
         socket->setSslConfiguration(ssl_config);
@@ -44,6 +44,20 @@ void ServerSocket::connect(QString hostname, int port, QString endpoint,
     socket->open(server_url);
 }
 
+void ServerSocket::close(QWebSocketProtocol::CloseCode f_code)
+{
+}
+
+void ServerSocket::write(QByteArray data)
+{
+    socket->sendBinaryMessage(data);
+}
+
+QAbstractSocket::SocketState ServerSocket::state()
+{
+    return socket->state();
+}
+
 void ServerSocket::handleSslError(const QList<QSslError> errors)
 {
     for (const QSslError &error : errors) {
@@ -51,4 +65,5 @@ void ServerSocket::handleSslError(const QList<QSslError> errors)
                  << error.errorString();
     }
     socket->close(QWebSocketProtocol::CloseCodeTlsHandshakeFailed);
+    emit sslError();
 }

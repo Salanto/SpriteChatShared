@@ -1,6 +1,8 @@
 #ifndef SERVERCLIENT_H
 #define SERVERCLIENT_H
 
+#include "coordinatortypes.h"
+#include "sockettypes.h"
 #include "spritechatshared_global.h"
 
 #include <QObject>
@@ -16,15 +18,23 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
     explicit ServerClient(QObject *parent = nullptr);
     ~ServerClient();
 
-    void setSocket(ServerSocket *f_socket);
     void setRouter(PacketRouter *f_router);
     void freeSocket();
     void freeRouter();
+
+  public slots:
+    void fetchServerMetadata(const CoordinatorTypes::ServerInfo &f_server);
+    void joinServer(const CoordinatorTypes::ServerInfo &f_server);
+    void disconnectSocket();
 
   private slots:
     void handleServerMessage(const QByteArray &f_message);
 
   private:
+    void setSocket(ServerSocket *f_socket);
+    void connectToServer(const QString &hostname, const int &port, const SocketTypes::SocketMode &f_mode);
+    const QString DATAROUTE = "data";
+    const QString GAMEROUTE = "game";
     ServerSocket *socket = nullptr;
     PacketRouter *router = nullptr;
 };

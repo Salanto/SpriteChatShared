@@ -90,3 +90,26 @@ void ServerClient::handleServerMessage(const QByteArray &f_message)
 
     router->route(l_packet);
 }
+
+void ServerClient::connectToServer(const QString &hostname, const int &port, const SocketTypes::SocketMode &f_mode)
+{
+    setSocket(new ServerSocket(this));
+    socket->connect(hostname, port, GAMEROUTE, f_mode);
+}
+
+void ServerClient::disconnectSocket()
+{
+    if (socket) {
+        if (socket->state() != QAbstractSocket::UnconnectedState) {
+            socket->close();
+        }
+    }
+}
+
+void ServerClient::fetchServerMetadata(const CoordinatorTypes::ServerInfo &f_server)
+{
+}
+
+void ServerClient::joinServer(const CoordinatorTypes::ServerInfo &f_server)
+{
+}
