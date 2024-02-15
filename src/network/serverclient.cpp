@@ -108,6 +108,11 @@ void ServerClient::disconnectSocket()
 
 void ServerClient::fetchServerMetadata(const CoordinatorTypes::ServerInfo &f_server)
 {
+    if (f_server.wss_port != -1) {
+    }
+    else {
+        socket->connect(f_server.)
+    }
 }
 
 void ServerClient::joinServer(const CoordinatorTypes::ServerInfo &f_server)

@@ -22,6 +22,9 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
     void freeSocket();
     void freeRouter();
 
+  signals:
+    void disconnected(QString reason);
+
   public slots:
     void fetchServerMetadata(const CoordinatorTypes::ServerInfo &f_server);
     void joinServer(const CoordinatorTypes::ServerInfo &f_server);
