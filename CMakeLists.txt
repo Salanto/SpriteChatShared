@@ -24,7 +24,6 @@ add_library(SpriteChatShared SHARED
     src/network/packets/notificationpacket.h src/network/packets/notificationpacket.cpp
     src/datatypes/servertypes.h
     src/datatypes/sockettypes.h
-    src/network/socketinterface.h src/network/socketinterface.cpp
     src/network/serversocket.h src/network/serversocket.cpp
     src/network/serverclient.h src/network/serverclient.cpp
     src/network/packets/serverhellopacket.h src/network/packets/serverhellopacket.cpp
