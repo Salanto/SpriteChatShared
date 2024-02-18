@@ -11,6 +11,7 @@
 ServerClient::ServerClient(QObject *parent) :
     QObject{parent}
 {
+    prouter = new PacketRouter(this);
 }
 
 ServerClient::~ServerClient()
@@ -19,35 +20,32 @@ ServerClient::~ServerClient()
     freeRouter();
 }
 
+PacketRouter *ServerClient::router()
+{
+    return prouter;
+}
+
 void ServerClient::setSocket(ServerSocket *f_socket)
 {
     freeSocket();
-    socket = f_socket;
-    connect(socket, &ServerSocket::dataReady, this, &ServerClient::handleServerMessage);
-}
-
-void ServerClient::setRouter(PacketRouter *f_router)
-{
-    freeRouter();
-    router = f_router;
+    ssocket = f_socket;
+    connect(ssocket, &ServerSocket::dataReady, this, &ServerClient::handleServerMessage);
 }
 
 void ServerClient::freeSocket()
 {
-    if (socket) {
-        disconnect(socket, &ServerSocket::dataReady, this, &ServerClient::handleServerMessage);
-        socket->disconnect();
-        socket->deleteLater();
-        socket = nullptr;
+    if (ssocket) {
+        disconnect(ssocket, &ServerSocket::dataReady, this, &ServerClient::handleServerMessage);
+        ssocket->disconnect();
+        ssocket->deleteLater();
+        ssocket = nullptr;
     }
 }
 
 void ServerClient::freeRouter()
 {
-
-    if (router) {
-        delete router;
-        router = nullptr;
+    if (prouter) {
+        delete prouter;
     }
 }
 
@@ -58,25 +56,25 @@ void ServerClient::handleServerMessage(const QByteArray &f_message)
 
     if (error.error != QJsonParseError::NoError) {
         qDebug() << "Error parsing message " << error.errorString();
-        socket->disconnect(QWebSocketProtocol::CloseCodeProtocolError, "Invalid JSON received.");
+        ssocket->disconnect(QWebSocketProtocol::CloseCodeProtocolError, "Invalid JSON received.");
         return;
     }
 
     if (!l_json_message.isObject()) {
         qDebug() << "Error parsing message. Message is not an object.";
-        socket->disconnect(QWebSocketProtocol::CloseCodeProtocolError, "Message is not an object.");
+        ssocket->disconnect(QWebSocketProtocol::CloseCodeProtocolError, "Message is not an object.");
         return;
     }
 
     QJsonObject obj = l_json_message.object();
     if (!obj["header"].isString()) {
         qDebug() << "Error parsing message. Header missing or invalid.";
-        socket->disconnect(QWebSocketProtocol::CloseCodeProtocolError, "Missing or invalid header.");
+        ssocket->disconnect(QWebSocketProtocol::CloseCodeProtocolError, "Missing or invalid header.");
         return;
     }
 
     QString l_header = obj["header"].toString();
-    if (!router->canRoute(l_header)) {
+    if (!prouter->canRoute(l_header)) {
         qDebug() << "Unable to route packet with header" << l_header;
         return;
     }
@@ -88,28 +86,21 @@ void ServerClient::handleServerMessage(const QByteArray &f_message)
         return;
     }
 
-    router->route(l_packet);
-}
-
-void ServerClient::connectToServer(const CoordinatorTypes::ServerInfo &f_server, const QString &f_endpoint,
-                                   const SocketTypes::SocketMode &f_mode)
-{
-    setSocket(new ServerSocket(f_server, f_endpoint, this));
-    socket->connectToEndpoint(f_mode);
+    prouter->route(l_packet);
 }
 
 void ServerClient::disconnectSocket()
 {
-    if (socket) {
-        if (socket->state() != QAbstractSocket::UnconnectedState) {
-            socket->disconnect();
+    if (ssocket) {
+        if (ssocket->state() != QAbstractSocket::UnconnectedState) {
+            ssocket->disconnect();
         }
     }
 }
 
 void ServerClient::fetchServerMetadata(const CoordinatorTypes::ServerInfo &f_server)
 {
-    if (f_server.wss_port == -1) {
+    if (f_server.wss_port != -1) {
         connectToServer(f_server, DATAROUTE, SocketTypes::SECURE);
     }
     else {
@@ -119,10 +110,17 @@ void ServerClient::fetchServerMetadata(const CoordinatorTypes::ServerInfo &f_ser
 
 void ServerClient::joinServer(const CoordinatorTypes::ServerInfo &f_server)
 {
-    if (f_server.wss_port == -1) {
+    if (f_server.wss_port != -1) {
         connectToServer(f_server, GAMEROUTE, SocketTypes::SECURE);
     }
     else {
         connectToServer(f_server, GAMEROUTE, SocketTypes::INSECURE);
     }
+}
+
+void ServerClient::connectToServer(const CoordinatorTypes::ServerInfo &f_server, const QString &f_endpoint,
+                                   const SocketTypes::SocketMode &f_mode)
+{
+    setSocket(new ServerSocket(f_server, f_endpoint, this));
+    ssocket->connectToEndpoint(f_mode);
 }

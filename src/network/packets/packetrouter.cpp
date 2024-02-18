@@ -2,28 +2,20 @@
 
 #include <QDebug>
 
-void PacketRouter::registerListener(QString f_identifier, QString f_listener, Route f_route)
+PacketRouter::PacketRouter(QObject *parent) :
+    QObject(parent)
 {
-    qDebug() << "Adding listener" << f_listener << "for packet" << f_identifier;
-    Routes l_routes = routes[f_identifier];
-    l_routes.insert(f_listener, f_route);
-    routes[f_identifier] = l_routes;
-}
-
-void PacketRouter::removeListener(QString f_identifier, QString f_listener)
-{
-    qDebug() << "Removing listener" << f_listener << "for packet" << f_identifier;
-    Routes l_routes = routes[f_identifier];
-    l_routes.remove(f_listener);
-    routes[f_identifier] = l_routes;
+    routes["SERVERHELLO"] = &PacketRouter::metaDataReceived;
 }
 
 void PacketRouter::route(std::shared_ptr<AbstractPacket> f_packet)
 {
-    Routes l_routes = routes[f_packet->header()];
-    for (Route route : qAsConst(l_routes)) {
-        std::invoke(route, f_packet);
-    };
+    if (!canRoute(f_packet.get()->header())) {
+        qDebug() << "Unable to route packet. Header unknown.";
+        return;
+    }
+    Route route = routes[f_packet->header()];
+    emit(this->*route)(f_packet);
 }
 
 bool PacketRouter::canRoute(QString f_route)

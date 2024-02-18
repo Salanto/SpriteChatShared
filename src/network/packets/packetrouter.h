@@ -4,24 +4,25 @@
 #include "abstractpacket.h"
 #include "spritechatshared_global.h"
 
+#include <QObject>
 #include <QString>
 #include <map>
 
-class SPRITECHATSHARED_EXPORT PacketRouter
+class SPRITECHATSHARED_EXPORT PacketRouter : public QObject
 {
-    using Route = std::function<void(std::shared_ptr<AbstractPacket>)>;
-    using Routes = QMap<QString, Route>;
+    Q_OBJECT
+    using Route = void (PacketRouter::*)(std::shared_ptr<AbstractPacket>);
 
   public:
-    PacketRouter() = default;
-
-    void registerListener(QString f_identifier, QString f_listener, Route f_route);
-    void removeListener(QString f_identifier, QString f_listener);
+    PacketRouter(QObject *parent = nullptr);
     void route(std::shared_ptr<AbstractPacket> f_packet);
     bool canRoute(QString f_route);
 
+  signals:
+    void metaDataReceived(std::shared_ptr<AbstractPacket> f_packet);
+
   private:
-    std::map<QString, Routes> routes;
+    std::map<QString, Route> routes;
 };
 
 #endif // PACKETROUTER_H

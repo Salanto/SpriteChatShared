@@ -18,9 +18,7 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
     explicit ServerClient(QObject *parent = nullptr);
     ~ServerClient();
 
-    void setRouter(PacketRouter *f_router);
-    void freeSocket();
-    void freeRouter();
+    PacketRouter *router();
 
   signals:
     void disconnected(QString reason);
@@ -34,12 +32,14 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
     void handleServerMessage(const QByteArray &f_message);
 
   private:
+    void freeSocket();
+    void freeRouter();
     void setSocket(ServerSocket *f_socket);
     void connectToServer(const CoordinatorTypes::ServerInfo &f_server, const QString &f_endpoint, const SocketTypes::SocketMode &f_mode);
     const QString DATAROUTE = "data";
     const QString GAMEROUTE = "game";
-    ServerSocket *socket = nullptr;
-    PacketRouter *router = nullptr;
+    ServerSocket *ssocket = nullptr;
+    PacketRouter *prouter = nullptr;
 };
 
 #endif // SERVERCLIENT_H

@@ -1,6 +1,7 @@
 #include "packetfactory.h"
 #include "abstractpacket.h"
 #include "notificationpacket.h"
+#include "serverhellopacket.h"
 
 #include <QtAssert>
 
@@ -20,6 +21,7 @@ std::shared_ptr<AbstractPacket> PacketFactory::createPacket(const QString &f_hea
 void PacketFactory::registerPackets()
 {
     registerPacket<NotificationPacket>();
+    registerPacket<ServerHelloPacket>();
 }
 
 template <class T>
