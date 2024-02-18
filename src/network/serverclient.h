@@ -35,7 +35,7 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
 
   private:
     void setSocket(ServerSocket *f_socket);
-    void connectToServer(const QString &hostname, const int &port, const SocketTypes::SocketMode &f_mode);
+    void connectToServer(const CoordinatorTypes::ServerInfo &f_server, const QString &f_endpoint, const SocketTypes::SocketMode &f_mode);
     const QString DATAROUTE = "data";
     const QString GAMEROUTE = "game";
     ServerSocket *socket = nullptr;
