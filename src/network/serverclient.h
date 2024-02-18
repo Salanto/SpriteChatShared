@@ -3,14 +3,13 @@
 
 #include "coordinatortypes.h"
 #include "sockettypes.h"
-#include "spritechatshared_global.h"
 
 #include <QObject>
 
 class ServerSocket;
 class PacketRouter;
 
-class SPRITECHATSHARED_EXPORT ServerClient : public QObject
+class ServerClient : public QObject
 {
     Q_OBJECT
 
