@@ -2,5 +2,5 @@
 
 QString CharlistTakenPacket::header() const
 {
-    return "CHARLIST_TAKEN";
+    return "CHARLISTTAKEN";
 }

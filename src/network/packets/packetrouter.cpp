@@ -5,7 +5,18 @@
 PacketRouter::PacketRouter(QObject *parent) :
     QObject(parent)
 {
+    routes["BACKGROUND"] = &PacketRouter::backgroundReceived;
+    routes["SELECTCHARACTER"] = &PacketRouter::characterReceived;
+    routes["CHARLIST"] = &PacketRouter::charlistReceived;
+    routes["CHARLISTTAKEN"] = &PacketRouter::charlistTakenReceived;
+    routes["CHAT"] = &PacketRouter::chatMessageReceived;
+    routes["LOCATIONLIST"] = &PacketRouter::locationListReceived;
+    routes["MUSIC"] = &PacketRouter::musicReceived;
+    routes["NOTIFICATION"] = &PacketRouter::notificationReceived;
     routes["SERVERHELLO"] = &PacketRouter::metaDataReceived;
+    routes["SIDE"] = &PacketRouter::sideReceived;
+    routes["SIDELIST"] = &PacketRouter::sideListReceived;
+    routes["VIEWPORT"] = &PacketRouter::viewportAnimationReceived;
 }
 
 void PacketRouter::route(std::shared_ptr<AbstractPacket> f_packet)

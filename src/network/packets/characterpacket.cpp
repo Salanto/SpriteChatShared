@@ -5,7 +5,7 @@
 
 QString CharacterPacket::header() const
 {
-    return "SELECT_CHARACTER";
+    return "SELECTCHARACTER";
 }
 
 bool CharacterPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &value)
