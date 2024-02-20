@@ -1,7 +1,20 @@
 #include "packetfactory.h"
 #include "abstractpacket.h"
+#include "backgroundpacket.h"
+#include "characterpacket.h"
+#include "charlistpacket.h"
+#include "charlisttakenpacket.h"
+#include "chatpacket.h"
+#include "hellopacket.h"
+#include "locationlistpacket.h"
+#include "locationpacket.h"
+#include "musicpacket.h"
 #include "notificationpacket.h"
+#include "selectmusicpacket.h"
 #include "serverhellopacket.h"
+#include "setsidepacket.h"
+#include "sidelistpacket.h"
+#include "viewportpacket.h"
 
 #include <QtAssert>
 
@@ -20,8 +33,21 @@ std::shared_ptr<AbstractPacket> PacketFactory::createPacket(const QString &f_hea
 
 void PacketFactory::registerPackets()
 {
+    registerPacket<BackgroundPacket>();
+    registerPacket<CharacterPacket>();
+    registerPacket<CharlistPacket>();
+    registerPacket<CharlistTakenPacket>();
+    registerPacket<ChatPacket>();
+    registerPacket<HelloPacket>();
+    registerPacket<LocationListPacket>();
+    registerPacket<LocationPacket>();
+    registerPacket<MusicPacket>();
     registerPacket<NotificationPacket>();
+    registerPacket<SelectMusicPacket>();
     registerPacket<ServerHelloPacket>();
+    registerPacket<SetSidePacket>();
+    registerPacket<SidelistPacket>();
+    registerPacket<ViewportPacket>();
 }
 
 template <class T>

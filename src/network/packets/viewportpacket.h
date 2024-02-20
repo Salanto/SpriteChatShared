@@ -4,7 +4,7 @@
 #include "abstractanimationevent.h"
 #include "abstractpacket.h"
 
-class SPRITECHATSHARED_EXPORT ViewportPacket : AbstractPacket
+class SPRITECHATSHARED_EXPORT ViewportPacket : public AbstractPacket
 {
   public:
     ViewportPacket() = default;
