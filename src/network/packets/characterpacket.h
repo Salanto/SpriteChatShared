@@ -9,7 +9,7 @@ class SPRITECHATSHARED_EXPORT CharacterPacket : public AbstractPacket
     CharacterPacket() = default;
 
     virtual QString header() const override;
-    bool fromJsonValue(const QJsonValue &value) override;
+    bool fromJsonValue(const QJsonValue &f_id, const QJsonValue &value) override;
     QByteArray toJson() const override;
 
     QString character() const;

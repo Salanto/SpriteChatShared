@@ -10,7 +10,7 @@ class SPRITECHATSHARED_EXPORT ChatPacket : public AbstractPacket
     ChatPacket() = default;
 
     QString header() const override;
-    bool fromJsonValue(const QJsonValue &value) override;
+    bool fromJsonValue(const QJsonValue &f_id, const QJsonValue &value) override;
     QByteArray toJson() const override;
 
     QString message() const;

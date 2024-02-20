@@ -8,13 +8,14 @@ QString ChatPacket::header() const
     return "CHAT";
 }
 
-bool ChatPacket::fromJsonValue(const QJsonValue &value)
+bool ChatPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &value)
 {
     if (!value.isObject()) {
         qDebug() << "Unable to parse ChatPacket. Body is not object.";
         return false;
     }
 
+    id = f_id.toString().toULongLong();
     QJsonObject l_data = value.toObject();
     message_sender = l_data["sender"].toString();
     ooc_message = l_data["messager"].toString();
@@ -31,6 +32,8 @@ QByteArray ChatPacket::toJson() const
     l_data["color"] = sender_color.toString();
 
     QJsonObject l_body;
+    id = QRandomGenerator64::global()->generate64();
+    l_body["id"] = QString::number(id);
     l_body["header"] = header();
     l_body["data"] = l_data;
     return QJsonDocument(l_body).toJson(QJsonDocument::Compact);

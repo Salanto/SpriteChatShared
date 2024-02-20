@@ -15,7 +15,7 @@ class SPRITECHATSHARED_EXPORT NotificationPacket : public AbstractPacket
     NotificationPacket() = default;
 
     QString header() const override;
-    bool fromJsonValue(const QJsonValue &value) override;
+    bool fromJsonValue(const QJsonValue &f_id, const QJsonValue &value) override;
     QByteArray toJson() const override;
 
     void setMessages(const QStringList &f_messages);

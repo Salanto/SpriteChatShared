@@ -1,18 +1,26 @@
 #include "viewportpacket.h"
 
+#include <QJsonDocument>
+#include <QJsonObject>
+
 QString ViewportPacket::header() const
 {
     return "VIEWPORT";
 }
 
-bool ViewportPacket::fromJsonValue(const QJsonValue &value)
+bool ViewportPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &value)
 {
+    id = f_id.toString().toULongLong();
     return false;
 }
 
 QByteArray ViewportPacket::toJson() const
 {
-    return QByteArray();
+    QJsonObject l_body;
+    id = QRandomGenerator64::global()->generate64();
+    l_body["id"] = QString::number(id);
+    l_body["header"] = header();
+    return QJsonDocument(l_body).toJson(QJsonDocument::Compact);
 }
 
 QString ViewportPacket::displayName() const

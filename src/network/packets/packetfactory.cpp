@@ -10,12 +10,12 @@ bool PacketFactory::canCreatePacket(const QString &f_header)
     return builders.count(f_header);
 }
 
-std::shared_ptr<AbstractPacket> PacketFactory::createPacket(const QString &f_header, const QJsonValue &f_data)
+std::shared_ptr<AbstractPacket> PacketFactory::createPacket(const QString &f_header, const QJsonValue &f_id, const QJsonValue &f_data)
 {
     if (!canCreatePacket(f_header)) {
         return std::shared_ptr<AbstractPacket>(nullptr);
     }
-    return std::invoke(builders[f_header], f_data);
+    return std::invoke(builders[f_header], f_id, f_data);
 }
 
 void PacketFactory::registerPackets()
@@ -33,10 +33,10 @@ void PacketFactory::registerPacket()
 }
 
 template <class T>
-std::shared_ptr<AbstractPacket> PacketFactory::createInstance(const QJsonValue &f_data)
+std::shared_ptr<AbstractPacket> PacketFactory::createInstance(const QJsonValue &f_id, const QJsonValue &f_data)
 {
     std::shared_ptr<T> l_packet = std::make_shared<T>();
-    if (l_packet.get()->fromJsonValue(f_data)) {
+    if (l_packet.get()->fromJsonValue(f_id, f_data)) {
         return l_packet;
     }
     return std::shared_ptr<AbstractPacket>(nullptr);

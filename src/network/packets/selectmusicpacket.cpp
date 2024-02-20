@@ -8,13 +8,14 @@ QString SelectMusicPacket::header() const
     return "SELECTMUSIC";
 }
 
-bool SelectMusicPacket::fromJsonValue(const QJsonValue &value)
+bool SelectMusicPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &value)
 {
     if (!value.isObject()) {
         qDebug() << "Unable to parse SelectMusicPacket. Body is not object.";
         return false;
     }
 
+    id = f_id.toString().toULongLong();
     QJsonObject l_data = value.toObject();
     music_channel = l_data["channel"].toInt(0);
     song_name = l_data["songname"].toString();
@@ -30,6 +31,8 @@ QByteArray SelectMusicPacket::toJson() const
     l_data["flags"] = behaviour_flags.toInt();
 
     QJsonObject l_body;
+    id = QRandomGenerator64::global()->generate64();
+    l_body["id"] = QString::number(id);
     l_body["header"] = header();
     l_body["data"] = l_data;
     return QJsonDocument(l_body).toJson(QJsonDocument::Compact);

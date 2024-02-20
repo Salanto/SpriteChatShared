@@ -80,7 +80,8 @@ void ServerClient::handleServerMessage(const QByteArray &f_message)
     }
 
     QJsonValue l_data = obj["data"];
-    std::shared_ptr<AbstractPacket> l_packet = PacketFactory::createPacket(l_header, l_data);
+    QJsonValue l_id = obj["id"];
+    std::shared_ptr<AbstractPacket> l_packet = PacketFactory::createPacket(l_header, l_id, l_data);
     if (l_packet.get() == nullptr) {
         qDebug() << "Constructed packet is not valid or no constructor is available.";
         return;

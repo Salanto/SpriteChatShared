@@ -9,7 +9,7 @@ class SetSidePacket : public AbstractPacket
     SetSidePacket() = default;
 
     virtual QString header() const;
-    virtual bool fromJsonValue(const QJsonValue &value);
+    virtual bool fromJsonValue(const QJsonValue &f_id, const QJsonValue &value);
     virtual QByteArray toJson() const;
 
     QString side() const;

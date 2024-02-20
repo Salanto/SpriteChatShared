@@ -9,13 +9,14 @@ QString SidelistPacket::header() const
     return "SIDELIST";
 }
 
-bool SidelistPacket::fromJsonValue(const QJsonValue &value)
+bool SidelistPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &value)
 {
     if (!value.isArray()) {
         qDebug() << "Unable to parse SideListPacket. Body is not array.";
         return false;
     }
 
+    id = f_id.toString().toULongLong();
     QJsonArray l_sides = value.toArray();
     for (const QJsonValue &l_side : l_sides) {
         if (!l_side.isObject()) {
@@ -43,6 +44,8 @@ QByteArray SidelistPacket::toJson() const
     }
 
     QJsonObject l_body;
+    id = QRandomGenerator64::global()->generate64();
+    l_body["id"] = QString::number(id);
     l_body["header"] = header();
     l_body["data"] = l_data;
     return QJsonDocument(l_body).toJson(QJsonDocument::Compact);

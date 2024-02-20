@@ -8,7 +8,7 @@ QString BackgroundPacket::header() const
     return "BACKGROUND";
 }
 
-bool BackgroundPacket::fromJsonValue(const QJsonValue &value)
+bool BackgroundPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &value)
 {
     if (!value.isObject()) {
         qDebug() << "Unable to parse BackgroundPacket. Body is not object.";
@@ -18,6 +18,8 @@ bool BackgroundPacket::fromJsonValue(const QJsonValue &value)
     QJsonObject l_data = value.toObject();
     background_name = l_data["name"].toString("default");
     reset_background = l_data["reset"].toBool(false);
+    id = f_id.toString().toULongLong();
+
     return true;
 }
 
@@ -28,6 +30,8 @@ QByteArray BackgroundPacket::toJson() const
     l_data["reset"] = reset_background;
 
     QJsonObject l_body;
+    id = QRandomGenerator64::global()->generate64();
+    l_body["id"] = QString::number(id);
     l_body["header"] = header();
     l_body["data"] = l_data;
     return QJsonDocument(l_body).toJson(QJsonDocument::Compact);

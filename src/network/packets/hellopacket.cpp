@@ -8,13 +8,14 @@ QString HelloPacket::header() const
     return "HELLO";
 }
 
-bool HelloPacket::fromJsonValue(const QJsonValue &value)
+bool HelloPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &value)
 {
     if (!value.isObject()) {
         qDebug() << "Unable to parse HelloPacket. Body is not object.";
         return false;
     }
 
+    id = f_id.toString().toULongLong();
     QJsonObject l_data = value.toObject();
     application_name = l_data["application"].toString("UNKNOWN");
     application_version = QVersionNumber::fromString(l_data["version"].toString("0.0.0"));
@@ -30,6 +31,8 @@ QByteArray HelloPacket::toJson() const
     l_data["identifier"] = client_identifier;
 
     QJsonObject l_body;
+    id = QRandomGenerator64::global()->generate64();
+    l_body["id"] = QString::number(id);
     l_body["header"] = header();
     l_body["data"] = l_data;
     return QJsonDocument(l_body).toJson(QJsonDocument::Compact);

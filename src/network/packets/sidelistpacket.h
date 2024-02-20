@@ -10,7 +10,7 @@ class SPRITECHATSHARED_EXPORT SidelistPacket : public AbstractPacket
     SidelistPacket() = default;
 
     virtual QString header() const;
-    virtual bool fromJsonValue(const QJsonValue &value);
+    virtual bool fromJsonValue(const QJsonValue &f_id, const QJsonValue &value);
     virtual QByteArray toJson() const;
 
     QList<AreaTypes::SideEntry> sides() const;

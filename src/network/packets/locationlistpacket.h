@@ -10,7 +10,7 @@ class SPRITECHATSHARED_EXPORT LocationListPacket : public AbstractPacket
     LocationListPacket() = default;
 
     virtual QString header() const;
-    virtual bool fromJsonValue(const QJsonValue &value);
+    virtual bool fromJsonValue(const QJsonValue &f_id, const QJsonValue &value);
     virtual QByteArray toJson() const;
 
     QVector<AreaTypes::LocationMetadata> locations() const;

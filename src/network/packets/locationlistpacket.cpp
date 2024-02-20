@@ -9,13 +9,14 @@ QString LocationListPacket::header() const
     return "LOCATIONLIST";
 }
 
-bool LocationListPacket::fromJsonValue(const QJsonValue &value)
+bool LocationListPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &value)
 {
     if (!value.isArray()) {
         qDebug() << "Unable to parse LocationListPacket. Body is not array.";
         return false;
     }
 
+    id = f_id.toString().toULongLong();
     // Lord have mercy.
     const QJsonArray l_array = value.toArray();
 
@@ -54,6 +55,8 @@ QByteArray LocationListPacket::toJson() const
     }
 
     QJsonObject l_body;
+    id = QRandomGenerator64::global()->generate64();
+    l_body["id"] = QString::number(id);
     l_body["header"] = header();
     l_body["data"] = l_data;
     return QJsonDocument(l_body).toJson(QJsonDocument::Compact);

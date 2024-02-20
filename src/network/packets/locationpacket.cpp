@@ -8,13 +8,14 @@ QString LocationPacket::header() const
     return "LOCATION";
 }
 
-bool LocationPacket::fromJsonValue(const QJsonValue &value)
+bool LocationPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &value)
 {
     if (!value.isObject()) {
         qDebug() << "Unable to parse LocationPacket. Body is not object.";
         return false;
     }
 
+    id = f_id.toString().toULongLong();
     QJsonObject l_data = value.toObject();
     area_index = l_data["area"].toInt(0);
     location_index = l_data["location"].toInt(0);
@@ -30,6 +31,8 @@ QByteArray LocationPacket::toJson() const
     l_data["location"] = location_index;
 
     QJsonObject l_body;
+    id = QRandomGenerator64::global()->generate64();
+    l_body["id"] = QString::number(id);
     l_body["header"] = header();
     l_body["data"] = l_data;
     return QJsonDocument(l_body).toJson(QJsonDocument::Compact);

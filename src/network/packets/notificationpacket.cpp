@@ -9,12 +9,14 @@ QString NotificationPacket::header() const
     return "INFORMATION";
 }
 
-bool NotificationPacket::fromJsonValue(const QJsonValue &value)
+bool NotificationPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &value)
 {
     if (!value.isArray()) {
         qDebug() << "Unable to parse NotificationPacket. Body is not array.";
         return false;
     }
+
+    id = f_id.toString().toULongLong();
     QJsonArray l_data = value.toArray();
     for (const QVariant &l_notification : l_data.toVariantList()) {
         notifications.append(l_notification.toString());
@@ -25,6 +27,8 @@ bool NotificationPacket::fromJsonValue(const QJsonValue &value)
 QByteArray NotificationPacket::toJson() const
 {
     QJsonObject l_data;
+    id = QRandomGenerator64::global()->generate64();
+    l_data["id"] = QString::number(id);
     l_data["header"] = header();
     l_data["data"] = QJsonArray::fromStringList(notifications);
 

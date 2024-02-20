@@ -12,7 +12,7 @@ class SPRITECHATSHARED_EXPORT ServerHelloPacket : public AbstractPacket
     ServerHelloPacket() = default;
 
     QString header() const override;
-    bool fromJsonValue(const QJsonValue &value) override;
+    bool fromJsonValue(const QJsonValue &f_id, const QJsonValue &value) override;
     QByteArray toJson() const override;
 
     void setAppName(const QString &f_app_name);

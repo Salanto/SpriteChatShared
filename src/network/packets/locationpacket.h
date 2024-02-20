@@ -9,7 +9,7 @@ class SPRITECHATSHARED_EXPORT LocationPacket : public AbstractPacket
     LocationPacket() = default;
 
     QString header() const override;
-    bool fromJsonValue(const QJsonValue &value) override;
+    bool fromJsonValue(const QJsonValue &f_id, const QJsonValue &value) override;
     QByteArray toJson() const override;
 
     int area() const;
