@@ -17,6 +17,27 @@ namespace MusicTypes {
     };
     Q_DECLARE_FLAGS(MusicFlags, MusicFlag)
     Q_FLAGS(MusicFlags)
+
+    enum PlaylistMode
+    {
+        SHUFFLE,
+        SERIES
+    };
+    Q_ENUM_NS(PlaylistMode);
+
+    struct SPRITECHATSHARED_EXPORT Playlist
+    {
+        QStringList songs;
+        PlaylistMode mode;
+    };
+
+    struct SPRITECHATSHARED_EXPORT MusicListSegment
+    {
+        QString category;
+        QList<QString> songs;
+    };
+    using MusicList = QList<MusicListSegment>;
+
 }
 Q_DECLARE_OPERATORS_FOR_FLAGS(MusicTypes::MusicFlags)
 

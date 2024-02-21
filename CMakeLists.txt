@@ -34,6 +34,7 @@ add_library(SpriteChatShared SHARED
     src/datatypes/musictypes.h
     src/network/packets/selectmusicpacket.h src/network/packets/selectmusicpacket.cpp
     src/network/packets/musicpacket.h src/network/packets/musicpacket.cpp
+    src/network/packets/musiclistpacket.h src/network/packets/musiclistpacket.cpp
     src/network/packets/locationlistpacket.h src/network/packets/locationlistpacket.cpp
     src/datatypes/areatypes.h
     src/network/packets/locationpacket.h src/network/packets/locationpacket.cpp

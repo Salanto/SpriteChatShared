@@ -8,6 +8,7 @@
 #include "hellopacket.h"
 #include "locationlistpacket.h"
 #include "locationpacket.h"
+#include "musiclistpacket.h"
 #include "musicpacket.h"
 #include "notificationpacket.h"
 #include "selectmusicpacket.h"
@@ -41,6 +42,7 @@ void PacketFactory::registerPackets()
     registerPacket<HelloPacket>();
     registerPacket<LocationListPacket>();
     registerPacket<LocationPacket>();
+    registerPacket<MusiclistPacket>();
     registerPacket<MusicPacket>();
     registerPacket<NotificationPacket>();
     registerPacket<SelectMusicPacket>();
