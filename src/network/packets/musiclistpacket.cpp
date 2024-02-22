@@ -36,7 +36,7 @@ bool MusiclistPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &va
 QByteArray MusiclistPacket::toJson() const
 {
     QJsonArray array;
-    for (const MusicTypes::MusicListSegment &segment : musiclist) {
+    for (const MusicTypes::MusicListSegment &segment : musiclist()) {
         QJsonObject l_temp;
         l_temp["category"] = segment.category;
         l_temp["songs"] = QJsonArray::fromStringList(segment.songs);
@@ -49,4 +49,14 @@ QByteArray MusiclistPacket::toJson() const
     l_body["header"] = header();
     l_body["data"] = array;
     return QJsonDocument(l_body).toJson(QJsonDocument::Compact);
+}
+
+MusicTypes::MusicList MusiclistPacket::musiclist() const
+{
+    return m_musiclist;
+}
+
+void MusiclistPacket::setMusiclist(const MusicTypes::MusicList &f_musiclist)
+{
+    m_musiclist = f_musiclist;
 }

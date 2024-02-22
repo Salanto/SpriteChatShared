@@ -5,7 +5,7 @@
 #include "musictypes.h"
 #include "spritechatshared_global.h"
 
-class MusiclistPacket : public AbstractPacket
+class SPRITECHATSHARED_EXPORT MusiclistPacket : public AbstractPacket
 {
   public:
     MusiclistPacket() = default;
@@ -14,8 +14,11 @@ class MusiclistPacket : public AbstractPacket
     bool fromJsonValue(const QJsonValue &f_id, const QJsonValue &value) override;
     QByteArray toJson() const override;
 
+    MusicTypes::MusicList musiclist() const;
+    void setMusiclist(const MusicTypes::MusicList &f_musiclist);
+
   private:
-    MusicTypes::MusicList musiclist;
+    MusicTypes::MusicList m_musiclist;
 };
 
 #endif // MUSICLISTPACKET_H
