@@ -22,10 +22,12 @@ class SPRITECHATSHARED_EXPORT ServerSocket : public QObject
     void connectToEndpoint(SocketTypes::SocketMode f_mode);
     void disconnect(QWebSocketProtocol::CloseCode f_reason = QWebSocketProtocol::CloseCodeNormal, const QString &f_message = "");
     QAbstractSocket::SocketState state();
+    void write(const QByteArray &message);
 
   signals:
     void sslErrorOccurred();
     void connectionLost();
+    void connected();
     void dataReady(const QByteArray &f_message);
 
   private slots:

@@ -7,11 +7,15 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QTimer>
 
 ServerClient::ServerClient(QObject *parent) :
     QObject{parent}
 {
     prouter = new PacketRouter(this);
+    connect(prouter, &PacketRouter::sendServerPacket, this, &ServerClient::writeServerMessage);
+    timeout = new QTimer(this);
+    connect(timeout, &QTimer::timeout, this, &ServerClient::metadataTimeout);
 }
 
 ServerClient::~ServerClient()
@@ -90,6 +94,11 @@ void ServerClient::handleServerMessage(const QByteArray &f_message)
     prouter->route(l_packet);
 }
 
+void ServerClient::writeServerMessage(const QByteArray &f_message)
+{
+    ssocket->write(f_message);
+}
+
 void ServerClient::disconnectSocket()
 {
     if (ssocket) {
@@ -123,5 +132,10 @@ void ServerClient::connectToServer(const CoordinatorTypes::ServerInfo &f_server,
                                    const SocketTypes::SocketMode &f_mode)
 {
     setSocket(new ServerSocket(f_server, f_endpoint, this));
+
+    if (f_endpoint == GAMEROUTE) {
+        connect(ssocket, &ServerSocket::connected, this, &ServerClient::connected);
+    }
+
     ssocket->connectToEndpoint(f_mode);
 }

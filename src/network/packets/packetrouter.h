@@ -19,7 +19,10 @@ class SPRITECHATSHARED_EXPORT PacketRouter : public QObject
     void route(std::shared_ptr<AbstractPacket> f_packet);
     bool canRoute(QString f_route);
 
+    bool writePacket(const QByteArray packet);
   signals:
+    void sendServerPacket(const QByteArray &f_packet);
+
     void loadingStep(LoadingTypes::LoadingState f_state);
     void t_loadingLocations(std::shared_ptr<AbstractPacket> f_packet);
     void t_loadingMusic(std::shared_ptr<AbstractPacket> f_packet);

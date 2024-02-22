@@ -9,6 +9,7 @@
 
 class ServerSocket;
 class PacketRouter;
+class QTimer;
 
 class SPRITECHATSHARED_EXPORT ServerClient : public QObject
 {
@@ -22,6 +23,8 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
 
   signals:
     void disconnected(QString reason);
+    void connected();
+    void metadataTimeout();
 
   public slots:
     void fetchServerMetadata(const CoordinatorTypes::ServerInfo &f_server);
@@ -30,6 +33,7 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
 
   private slots:
     void handleServerMessage(const QByteArray &f_message);
+    void writeServerMessage(const QByteArray &f_message);
 
   private:
     void freeSocket();
@@ -38,8 +42,10 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
     void connectToServer(const CoordinatorTypes::ServerInfo &f_server, const QString &f_endpoint, const SocketTypes::SocketMode &f_mode);
     const QString DATAROUTE = "data";
     const QString GAMEROUTE = "game";
+    const int HANDSHAKE_TIMEOUT = 1000 * 10;
     ServerSocket *ssocket = nullptr;
     PacketRouter *prouter = nullptr;
+    QTimer *timeout = nullptr;
 };
 
 #endif // SERVERCLIENT_H

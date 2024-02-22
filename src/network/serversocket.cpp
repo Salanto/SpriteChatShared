@@ -10,6 +10,7 @@ ServerSocket::ServerSocket(CoordinatorTypes::ServerInfo f_server, QString f_endp
     socket = new QWebSocket(QSysInfo::machineHostName(), QWebSocketProtocol::VersionLatest, this);
     connect(socket, &QWebSocket::disconnected, this, &ServerSocket::disconnectedFromHost);
     connect(socket, &QWebSocket::binaryMessageReceived, this, &ServerSocket::dataReady);
+    connect(socket, &QWebSocket::connected, this, &ServerSocket::connected);
 }
 
 void ServerSocket::connectToEndpoint(SocketTypes::SocketMode f_mode)
@@ -44,6 +45,11 @@ void ServerSocket::disconnect(QWebSocketProtocol::CloseCode f_reason, const QStr
 QAbstractSocket::SocketState ServerSocket::state()
 {
     return socket->state();
+}
+
+void ServerSocket::write(const QByteArray &message)
+{
+    socket->sendBinaryMessage(message);
 }
 
 void ServerSocket::handleSslError(const QList<QSslError> errors)
