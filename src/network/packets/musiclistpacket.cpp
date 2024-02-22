@@ -27,7 +27,7 @@ bool MusiclistPacket::fromJsonValue(const QJsonValue &f_id, const QJsonValue &va
             value.songs.append(song.toString());
         }
         value.category = segment["category"].toString();
-        musiclist.append(value);
+        m_musiclist.append(value);
     }
     id = f_id.toInt();
     return true;
