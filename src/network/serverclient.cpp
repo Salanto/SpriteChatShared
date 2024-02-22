@@ -15,7 +15,9 @@ ServerClient::ServerClient(QObject *parent) :
     prouter = new PacketRouter(this);
     connect(prouter, &PacketRouter::sendServerPacket, this, &ServerClient::writeServerMessage);
     timeout = new QTimer(this);
-    connect(timeout, &QTimer::timeout, this, &ServerClient::metadataTimeout);
+    timeout->setSingleShot(true);
+    timeout->setInterval(METADATA_TIMEOUT);
+    connect(timeout, &QTimer::timeout, this, [this]() { emit metadataTimeout("Server did not respond in time."); });
 }
 
 ServerClient::~ServerClient()
@@ -110,6 +112,7 @@ void ServerClient::disconnectSocket()
 
 void ServerClient::fetchServerMetadata(const CoordinatorTypes::ServerInfo &f_server)
 {
+    timeout->start();
     if (f_server.wss_port != -1) {
         connectToServer(f_server, DATAROUTE, SocketTypes::SECURE);
     }
@@ -132,6 +135,12 @@ void ServerClient::connectToServer(const CoordinatorTypes::ServerInfo &f_server,
                                    const SocketTypes::SocketMode &f_mode)
 {
     setSocket(new ServerSocket(f_server, f_endpoint, this));
+
+    if (f_endpoint == DATAROUTE) {
+        connect(ssocket, &ServerSocket::connected, this, [this]() {
+            timeout->stop();
+        });
+    }
 
     if (f_endpoint == GAMEROUTE) {
         connect(ssocket, &ServerSocket::connected, this, &ServerClient::connected);

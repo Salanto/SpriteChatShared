@@ -24,7 +24,7 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
   signals:
     void disconnected(QString reason);
     void connected();
-    void metadataTimeout();
+    void metadataTimeout(QString reason = "No reason provided");
 
   public slots:
     void fetchServerMetadata(const CoordinatorTypes::ServerInfo &f_server);
@@ -42,7 +42,7 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
     void connectToServer(const CoordinatorTypes::ServerInfo &f_server, const QString &f_endpoint, const SocketTypes::SocketMode &f_mode);
     const QString DATAROUTE = "data";
     const QString GAMEROUTE = "game";
-    const int HANDSHAKE_TIMEOUT = 1000 * 10;
+    const int METADATA_TIMEOUT = 1000 * 10;
     ServerSocket *ssocket = nullptr;
     PacketRouter *prouter = nullptr;
     QTimer *timeout = nullptr;
