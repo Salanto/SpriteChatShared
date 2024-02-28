@@ -16,6 +16,18 @@ if (Qt6_VERSION VERSION_LESS 6.5)
     message(FATAL_ERROR "This project only works with Qt 6.5 or higher!")
 endif()
 
+include(FetchContent)
+message("Fetching bit7z")
+FetchContent_Declare(
+    bit7z
+    GIT_REPOSITORY https://github.com/rikyoz/bit7z.git
+    GIT_TAG v4.0.5
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/third-party/bit7z
+)
+set(BIT7Z_AUTO_FORMAT ON)
+FetchContent_MakeAvailable(bit7z)
+
+
 add_library(SpriteChatShared SHARED
     src/spritechatshared_global.h
     src/network/packets/abstractpacket.h
@@ -50,6 +62,8 @@ add_library(SpriteChatShared SHARED
     src/network/coordinatorclient.h src/network/coordinatorclient.cpp
     src/network/coordinatoradvertiser.h src/network/coordinatoradvertiser.cpp
     src/datatypes/loadingtypes.h
+    src/assets/mount.h src/assets/mount.cpp
+    src/assets/mountaccess.h src/assets/mountaccess.cpp
 )
 
 target_include_directories(SpriteChatShared
@@ -59,12 +73,14 @@ target_include_directories(SpriteChatShared
     PUBLIC src/network/packets
     PUBLIC src/network/socket
     PUBLIC src/viewport
+    PRIVATE third-party/bit7z/include
 )
 
 target_link_libraries(SpriteChatShared PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::WebSockets
     Qt${QT_VERSION_MAJOR}::Network
+    bit7z
 )
 
 target_compile_definitions(SpriteChatShared PRIVATE

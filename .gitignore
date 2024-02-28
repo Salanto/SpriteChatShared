@@ -78,4 +78,5 @@ CMakeLists.txt.user*
 
 # Project Files
 # --------
-lib/
+lib/*
+third-party/*
