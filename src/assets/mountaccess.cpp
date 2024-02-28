@@ -27,7 +27,7 @@ std::optional<QByteArray> MountAccess::load(QString path)
 
 void MountAccess::initialise(QStringList paths)
 {
-    qDebug() << "Initialising Mounting System";
+    qDebug() << "Initialising Mount Handles";
     for (const QString &path : paths) {
         Mount *l_mount = new Mount(this, path);
         if (!l_mount->open()) {
@@ -51,14 +51,5 @@ void MountAccess::reloadPackages(QStringList package_paths)
         package_paths.removeAll(mount->path());
     }
 
-    for (const QString &path : package_paths) {
-        Mount *l_mount = new Mount(this, path);
-        if (!l_mount->open()) {
-            continue;
-        }
-        if (!l_mount->indexArchive()) {
-            l_mount->saveIndex();
-        }
-        mounts.append(l_mount);
-    }
+    initialise(package_paths);
 }
