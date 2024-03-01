@@ -2,17 +2,35 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QFileInfo>
 
-Mount::Mount(QObject *parent, QString path) :
+Mount::Mount(AssetTypes::MountData info, QObject *parent) :
     QObject{parent},
-    phys_path{path}
+    information{info}
 {
-    qDebug() << "Creating mount handle for" << path;
+    if (!QFile::exists(information.path) || !open()) {
+        return;
+    }
+
+    QFileInfo l_mount_file_info(information.path);
+    if (l_mount_file_info.lastModified() != information.last_modified) {
+        mount_state = AssetTypes::MODIFIED;
+        information.last_modified = l_mount_file_info.lastModified();
+    }
+    else {
+        mount_state = AssetTypes::UNMODIFIED;
+    }
+    loadCache();
+}
+
+Mount::~Mount()
+{
+    saveCache();
 }
 
 bool Mount::open()
 {
-    handle = new bit7z::BitArchiveReader(context, phys_path.toStdString(),
+    handle = new bit7z::BitArchiveReader(context, information.path.toStdString(),
                                          bit7z::BitFormat::Auto);
     try {
         handle->test();
@@ -26,49 +44,6 @@ bool Mount::open()
 bool Mount::contains(QString file)
 {
     return cached_paths.contains(file);
-}
-
-bool Mount::indexArchive(bool override)
-{
-    const QString cache_path = cachePath();
-
-    if (override) {
-        qDebug() << "Deleting existing cache, wether they like it or not.";
-        QFile::remove(cachePath());
-    }
-
-    if (QFile::exists(cache_path)) {
-        QFile cache(cache_path);
-        if (cache.open(QIODevice::ReadOnly)) {
-            QDataStream in(&cache);
-            in >> cached_paths;
-            cache.close();
-            return true;
-        }
-    }
-
-    auto items = handle->items();
-    for (const bit7z::BitArchiveItemInfo &item : items) {
-        QString path = QString::fromStdString(item.path()).replace("\\", "/");
-        cached_paths.insert(path, item.index());
-        qDebug() << path << item.index();
-    }
-    return false;
-}
-
-bool Mount::saveIndex()
-{
-    QFile cache(cachePath());
-    if (cache.open(QIODevice::WriteOnly)) {
-        QDataStream out(&cache);
-        out << cached_paths;
-        cache.close();
-        return true;
-    }
-    else {
-        qDebug() << cache.errorString();
-    }
-    return false;
 }
 
 QByteArray Mount::load(QString path)
@@ -85,14 +60,55 @@ QByteArray Mount::load(QString path)
     return QByteArray(reinterpret_cast<const char *>(buffer.data()), buffer.size());
 }
 
+AssetTypes::MountState Mount::state()
+{
+    return mount_state;
+}
+
 QString Mount::path()
 {
-    return phys_path;
+    return information.path;
+}
+
+void Mount::loadCache()
+{
+    if (state() == AssetTypes::MODIFIED) {
+        QFile::remove(cachePath());
+    }
+
+    if (!QFile::exists(cachePath())) {
+        auto items = handle->items();
+        for (const bit7z::BitArchiveItemInfo &item : items) {
+            QString path = QString::fromStdString(item.path()).replace("\\", "/");
+            cached_paths.insert(path, item.index());
+        }
+        return;
+    }
+
+    QFile cache(cachePath());
+    if (cache.open(QIODevice::ReadOnly)) {
+        QDataStream in(&cache);
+        in >> cached_paths;
+        cache.close();
+    }
+}
+
+void Mount::saveCache()
+{
+    QFile cache(cachePath());
+    if (cache.open(QIODevice::WriteOnly)) {
+        QDataStream out(&cache);
+        out << cached_paths;
+        cache.close();
+    }
+    else {
+        qDebug() << cache.errorString();
+    }
 }
 
 QString Mount::cachePath() const
 {
-    QStringList cache_path_split = phys_path.split("/");
+    QStringList cache_path_split = information.path.split("/");
     cache_path_split.removeLast();
     return cache_path_split.join("/").append(".path");
 }

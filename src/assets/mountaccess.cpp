@@ -3,15 +3,41 @@
 
 #include <QDebug>
 
+MountAccess *MountAccess::ref()
+{
+    static MountAccess instance;
+    return &instance;
+}
+
 MountAccess::MountAccess()
 {
     qDebug() << "Starting pathing cache";
 }
 
-MountAccess *MountAccess::ref()
+void MountAccess::loadMounts(const AssetTypes::MountList &mount_list)
 {
-    static MountAccess instance;
-    return &instance;
+    if (!mounts.isEmpty()) {
+        cleanup();
+    }
+
+    for (const AssetTypes::MountData &data : mount_list) {
+        Mount *l_mount = new Mount(data, this);
+        if (l_mount->state() == AssetTypes::INVALID) {
+            l_mount->deleteLater();
+            emit errorOccured(QString("Mount at %1 is in an invalid state").arg(data.path));
+            continue;
+        }
+        qDebug() << "Mount at" << data.path << "had the state" << l_mount->state();
+        mounts.append(l_mount);
+    }
+}
+
+void MountAccess::cleanup()
+{
+    for (Mount *mount : mounts) {
+        mount->deleteLater();
+    }
+    mounts.clear();
 }
 
 std::optional<QByteArray> MountAccess::load(QString path)
@@ -23,33 +49,4 @@ std::optional<QByteArray> MountAccess::load(QString path)
         return std::optional<QByteArray>(mount->load(path));
     }
     return std::nullopt;
-}
-
-void MountAccess::initialise(QStringList paths)
-{
-    qDebug() << "Initialising Mount Handles";
-    for (const QString &path : paths) {
-        Mount *l_mount = new Mount(this, path);
-        if (!l_mount->open()) {
-            continue;
-        }
-        if (!l_mount->indexArchive()) {
-            l_mount->saveIndex();
-        }
-        mounts.append(l_mount);
-    }
-}
-
-void MountAccess::reloadPackages(QStringList package_paths)
-{
-    // Don't reopen when we already have an open handle.
-    for (Mount *mount : mounts) {
-        if (!package_paths.contains(mount->path())) {
-            mounts.removeAll(mount);
-            mount->deleteLater();
-        }
-        package_paths.removeAll(mount->path());
-    }
-
-    initialise(package_paths);
 }

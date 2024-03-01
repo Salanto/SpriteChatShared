@@ -1,6 +1,7 @@
 #ifndef MOUNTACCESS_H
 #define MOUNTACCESS_H
 
+#include "assettypes.h"
 #include "spritechatshared_global.h"
 
 #include <QObject>
@@ -16,13 +17,16 @@ class SPRITECHATSHARED_EXPORT MountAccess : public QObject
     static MountAccess *ref();
 
     std::optional<QByteArray> load(QString path);
-    void initialise(QStringList paths);
 
-  private Q_SLOTS:
-    void reloadPackages(QStringList package_paths);
+  Q_SIGNALS:
+    void errorOccured(QString message);
+
+  public Q_SLOTS:
+    void loadMounts(const AssetTypes::MountList &mounts);
 
   private:
     MountAccess();
+    void cleanup();
     QVector<Mount *> mounts;
 };
 

@@ -64,6 +64,7 @@ add_library(SpriteChatShared SHARED
     src/datatypes/loadingtypes.h
     src/assets/mount.h src/assets/mount.cpp
     src/assets/mountaccess.h src/assets/mountaccess.cpp
+    src/datatypes/assettypes.h
 )
 
 target_include_directories(SpriteChatShared
