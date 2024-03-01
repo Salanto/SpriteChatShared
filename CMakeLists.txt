@@ -62,9 +62,6 @@ add_library(SpriteChatShared SHARED
     src/network/coordinatorclient.h src/network/coordinatorclient.cpp
     src/network/coordinatoradvertiser.h src/network/coordinatoradvertiser.cpp
     src/datatypes/loadingtypes.h
-    src/assets/mount.h src/assets/mount.cpp
-    src/assets/mountaccess.h src/assets/mountaccess.cpp
-    src/datatypes/assettypes.h
 )
 
 target_include_directories(SpriteChatShared
