@@ -20,7 +20,11 @@ void MountAccess::loadMounts(const AssetTypes::MountList &mount_list)
         cleanup();
     }
 
-    for (const AssetTypes::MountData &data : mount_list) {
+    for (const AssetTypes::MountSave &data : mount_list) {
+        if (!data.enabled) {
+            continue;
+        }
+
         Mount *l_mount = new Mount(data, this);
         if (l_mount->state() == AssetTypes::INVALID) {
             l_mount->deleteLater();

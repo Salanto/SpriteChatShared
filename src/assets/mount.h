@@ -12,7 +12,7 @@ class Mount : public QObject
     Q_OBJECT
 
   public:
-    explicit Mount(AssetTypes::MountData info, QObject *parent = nullptr);
+    explicit Mount(AssetTypes::MountSave info, QObject *parent = nullptr);
     ~Mount();
 
     bool contains(QString file);
@@ -28,7 +28,7 @@ class Mount : public QObject
 
     // Path in the OS filesystem.
     AssetTypes::MountState mount_state = AssetTypes::INVALID;
-    AssetTypes::MountData information;
+    AssetTypes::MountSave information;
     QHash<QString, unsigned int> cached_paths;
     const bit7z::Bit7zLibrary context;
     bit7z::BitArchiveReader *handle;

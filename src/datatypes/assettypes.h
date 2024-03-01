@@ -15,13 +15,7 @@ namespace AssetTypes {
         bool enabled;
         QDateTime last_modified;
     };
-
-    struct SPRITECHATSHARED_EXPORT MountData
-    {
-        QString path;
-        QDateTime last_modified;
-    };
-    using MountList = QList<MountData>;
+    using MountList = QList<MountSave>;
 
     enum MountState
     {
