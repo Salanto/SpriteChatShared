@@ -18,15 +18,20 @@ class SPRITECHATSHARED_EXPORT MountAccess : public QObject
         return &instance;
     }
 
-    void loadMounts(QStringList mount_paths);
+    MountAccess(QObject *parent = nullptr);
+    ~MountAccess();
+
+    void loadMounts(QStringList paths);
+
+    bool canFetch()
+    {
+        return true;
+    }
     std::optional<QByteArray> fetch(QString path);
 
   private:
-    QVector<Mount *> loaded_mounts;
     QReadWriteLock lock;
-
-    MountAccess(QObject *parent = nullptr);
-    ~MountAccess();
+    QVector<Mount *> loaded_mounts;
 
     void cleanupMounts();
 };

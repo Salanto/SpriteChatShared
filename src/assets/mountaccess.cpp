@@ -3,11 +3,13 @@
 #include <QReadLocker>
 #include <QWriteLocker>
 
-void MountAccess::loadMounts(QStringList mount_paths)
+void MountAccess::loadMounts(QStringList paths)
 {
     QWriteLocker locker(&lock);
     QVector<Mount *> newly_loaded_mounts;
-    for (const QString &path : mount_paths) {
+    for (const QString &path : paths) {
+        qInfo() << "Loading mount at" << path;
+
         Mount *mount = nullptr;
         for (int i = 0; i < loaded_mounts.size(); ++i) {
             Mount *loaded_mount = loaded_mounts.at(i);
@@ -18,11 +20,22 @@ void MountAccess::loadMounts(QStringList mount_paths)
             }
         }
 
-        if (mount == nullptr) {
-            mount = new Mount(path);
+        try {
+            if (mount == nullptr) {
+                mount = new Mount(path);
+            }
+
+            if (!mount->load()) {
+                qWarning() << "Failed to load mount at" << path;
+                delete mount;
+                continue;
+            }
+
+            qInfo() << "Finished loading" << path;
+            newly_loaded_mounts.append(mount);
+        } catch (std::exception &e) {
+            qWarning() << e.what();
         }
-        mount->load();
-        newly_loaded_mounts.append(mount);
     }
 
     cleanupMounts();
@@ -32,16 +45,24 @@ void MountAccess::loadMounts(QStringList mount_paths)
 std::optional<QByteArray> MountAccess::fetch(QString path)
 {
     QReadLocker locker(&lock);
-    for (Mount *l_mount : loaded_mounts) {
-        if (l_mount->containsFile(path)) {
-            return std::optional<QByteArray>(l_mount->fetchFile(path));
+    for (Mount *mount : loaded_mounts) {
+        if (mount->containsFile(path)) {
+            return std::optional<QByteArray>(mount->fetchFile(path));
         }
     }
     return std::nullopt;
 }
+
 MountAccess::MountAccess(QObject *parent) :
     QObject{parent}
-{}
+{
+}
+
+MountAccess::~MountAccess()
+{
+    QWriteLocker locker(&lock);
+    cleanupMounts();
+}
 
 void MountAccess::cleanupMounts()
 {
@@ -49,8 +70,4 @@ void MountAccess::cleanupMounts()
         mount->deleteLater();
     }
     loaded_mounts.clear();
-}
-MountAccess::~MountAccess()
-{
-    cleanupMounts();
 }

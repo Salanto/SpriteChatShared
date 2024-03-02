@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core WebSockets Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core WebSockets Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core WebSockets Network Test)
 
 if (Qt6_VERSION VERSION_LESS 6.5)
     message(FATAL_ERROR "This project only works with Qt 6.5 or higher!")
@@ -62,18 +62,19 @@ add_library(SpriteChatShared SHARED
     src/network/coordinatorclient.h src/network/coordinatorclient.cpp
     src/network/coordinatoradvertiser.h src/network/coordinatoradvertiser.cpp
     src/datatypes/loadingtypes.h
-    assets/mountaccess.h assets/mountaccess.cpp
-    assets/mount.h assets/mount.cpp
+    src/assets/mountaccess.h src/assets/mountaccess.cpp
+    src/assets/mount.h src/assets/mount.cpp
 )
 
-target_include_directories(SpriteChatShared
+target_include_directories(SpriteChatShared PUBLIC
     PUBLIC src
+    PUBLIC src/assets
     PUBLIC src/datatypes
     PUBLIC src/network
     PUBLIC src/network/packets
     PUBLIC src/network/socket
     PUBLIC src/viewport
-    PRIVATE third-party/bit7z/include
+    PUBLIC third-party/bit7z/include
 )
 
 target_link_libraries(SpriteChatShared PRIVATE
@@ -84,10 +85,33 @@ target_link_libraries(SpriteChatShared PRIVATE
 )
 
 target_compile_definitions(SpriteChatShared PRIVATE
-    SPRITECHATSHARED_LIBRARY TRUE
+    SPRITECHATSHARED_LIBRARY
 )
 
 set_target_properties(SpriteChatShared PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/bin>
     RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/bin>
+)
+
+add_executable(SpriteChatTest WIN32
+    test/testmount.h test/testmount.cpp
+)
+
+target_include_directories(SpriteChatTest PUBLIC
+  test
+)
+
+target_link_libraries(SpriteChatTest PUBLIC
+  SpriteChatShared
+  Qt${QT_VERSION_MAJOR}::Core
+  Qt${QT_VERSION_MAJOR}::Test
+)
+
+target_link_directories(SpriteChatTest PUBLIC
+  $<TARGET_FILE_DIR:SpriteChatShared>
+)
+
+set_target_properties(SpriteChatTest PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/testbin>
+    RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/testbin>
 )
