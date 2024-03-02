@@ -29,7 +29,7 @@ class SPRITECHATSHARED_EXPORT Mount : public QObject
     QByteArray fetchFile(QString path);
 
   private:
-    bool loadCache(QDateTime lastModified);
+    bool loadCache();
     void saveCache();
 
     void resetReader();

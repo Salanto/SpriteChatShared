@@ -7,7 +7,9 @@
 
 Mount::Mount(QString path) :
     m_path(path)
-{}
+{
+    load();
+}
 
 Mount::~Mount()
 {
@@ -31,8 +33,8 @@ void Mount::load()
     }
 
     QFileInfo info(m_path);
-    if (!loadCache(info.lastModified())) {
-        m_last_modified = info.lastModified();
+    m_last_modified = info.lastModified();
+    if (!loadCache()) {
         m_cache.clear();
         try {
             auto items = m_reader->items();
@@ -66,7 +68,7 @@ QByteArray Mount::fetchFile(QString path)
     return QByteArray(reinterpret_cast<const char *>(buffer.data()), buffer.size());
 }
 
-bool Mount::loadCache(QDateTime lastModified)
+bool Mount::loadCache()
 {
     QFile file(m_path + ".cache");
     if (!file.open(QIODevice::ReadOnly)) {
@@ -77,15 +79,14 @@ bool Mount::loadCache(QDateTime lastModified)
     QDataStream stream(&file);
     QDateTime cache_last_modified;
     stream >> cache_last_modified;
-    if (cache_last_modified < lastModified) {
+
+    if (cache_last_modified < m_last_modified) {
         qInfo() << "Skipping cache loading for mount" << m_path << ": out of date";
         return false;
     }
 
-    m_last_modified = cache_last_modified;
     m_cache.clear();
     stream >> m_cache;
-
     if (stream.status() != QDataStream::Ok) {
         qCritical() << "Failed to load cache of mount" << m_path << "last known status:" << stream.status();
         return false;
