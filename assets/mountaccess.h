@@ -17,48 +17,13 @@ class SPRITECHATSHARED_EXPORT MountAccess : public QObject
         return &instance;
     }
 
-    void loadMounts(QStringList mount_paths)
-    {
-        QVector<Mount *> newly_loaded_mounts;
-        for (QString path : mount_paths) {
-            Mount *mount = nullptr;
-            for (int i = 0; i < loaded_mounts.size(); ++i) {
-                Mount *loaded_mount = loaded_mounts.at(i);
-                if (loaded_mount->path() == path) {
-                    loaded_mounts.remove(i);
-                    mount = loaded_mount;
-                    break;
-                }
-            }
-
-            if (mount == nullptr) {
-                mount = new Mount(path);
-            }
-            mount->load();
-            newly_loaded_mounts.append(mount);
-        }
-
-        cleanupMounts();
-        loaded_mounts = newly_loaded_mounts;
-    }
+    void loadMounts(QStringList mount_paths);
 
   private:
     QVector<Mount *> loaded_mounts;
 
-    MountAccess(QObject *parent = nullptr) :
-        QObject{parent}
-    {
-    }
-    ~MountAccess()
-    {
-        cleanupMounts();
-    }
+    MountAccess(QObject *parent = nullptr);
+    ~MountAccess();
 
-    void cleanupMounts()
-    {
-        for (Mount *mount : loaded_mounts) {
-            mount->deleteLater();
-        }
-        loaded_mounts.clear();
-    }
+    void cleanupMounts();
 };
