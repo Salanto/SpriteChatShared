@@ -4,6 +4,7 @@
 #include "spritechatshared_global.h"
 
 #include <QObject>
+#include <QReadWriteLock>
 #include <QVector>
 
 class SPRITECHATSHARED_EXPORT MountAccess : public QObject
@@ -22,6 +23,7 @@ class SPRITECHATSHARED_EXPORT MountAccess : public QObject
 
   private:
     QVector<Mount *> loaded_mounts;
+    QReadWriteLock lock;
 
     MountAccess(QObject *parent = nullptr);
     ~MountAccess();

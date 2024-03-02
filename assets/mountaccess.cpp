@@ -1,7 +1,11 @@
 #include "mountaccess.h"
 
+#include <QReadLocker>
+#include <QWriteLocker>
+
 void MountAccess::loadMounts(QStringList mount_paths)
 {
+    QWriteLocker locker(&lock);
     QVector<Mount *> newly_loaded_mounts;
     for (const QString &path : mount_paths) {
         Mount *mount = nullptr;
@@ -27,6 +31,7 @@ void MountAccess::loadMounts(QStringList mount_paths)
 
 std::optional<QByteArray> MountAccess::fetch(QString path)
 {
+    QReadLocker locker(&lock);
     for (Mount *l_mount : loaded_mounts) {
         if (l_mount->containsFile(path)) {
             return std::optional<QByteArray>(l_mount->fetchFile(path));
@@ -36,8 +41,8 @@ std::optional<QByteArray> MountAccess::fetch(QString path)
 }
 MountAccess::MountAccess(QObject *parent) :
     QObject{parent}
-{
-}
+{}
+
 void MountAccess::cleanupMounts()
 {
     for (Mount *mount : loaded_mounts) {
