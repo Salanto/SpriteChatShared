@@ -18,6 +18,7 @@ class SPRITECHATSHARED_EXPORT MountAccess : public QObject
     }
 
     void loadMounts(QStringList mount_paths);
+    std::optional<QByteArray> fetch(QString path);
 
   private:
     QVector<Mount *> loaded_mounts;
