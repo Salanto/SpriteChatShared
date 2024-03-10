@@ -5,6 +5,7 @@
 
 #include <QFile>
 #include <QObject>
+#include <QRegularExpression>
 #include <QtTest/QTest>
 
 class TestMount : public QObject
@@ -42,18 +43,15 @@ class TestMount : public QObject
     void failToOpenArchive_data()
     {
         QTest::addColumn<QStringList>("archives");
-        QTest::addColumn<QByteArray>("expected_error");
 
-        QTest::newRow("Missing archive") << QStringList{"missing_archive.zip"} << QByteArray("Failed to open \"missing_archive.zip\" Failed to open the archive file: The system cannot find the file specified.");
-        QTest::newRow("Corrupt archive") << QStringList{"corrupt_archive.zip"} << QByteArray("Failed to open \"corrupt_archive.zip\" Could not open the archive: Incorrect function.");
+        QTest::newRow("Missing archive") << QStringList{"missing_archive.zip"};
+        QTest::newRow("Corrupt archive") << QStringList{"corrupt_archive.zip"};
     }
     void failToOpenArchive()
     {
         QFETCH(QStringList, archives);
-        QFETCH(QByteArray, expected_error);
 
-        QTest::ignoreMessage(QtCriticalMsg, expected_error);
-        access->loadMounts(archives);
+        QVERIFY_THROWS_EXCEPTION(std::exception, access->loadMounts(archives));
     }
 
     void fetchContent_data()

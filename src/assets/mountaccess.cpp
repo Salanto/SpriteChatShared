@@ -35,6 +35,7 @@ void MountAccess::loadMounts(QStringList paths)
             newly_loaded_mounts.append(mount);
         } catch (std::exception &e) {
             qWarning() << e.what();
+            throw;
         }
     }
 
