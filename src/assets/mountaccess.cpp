@@ -8,8 +8,6 @@ void MountAccess::loadMounts(QStringList paths)
     QWriteLocker locker(&lock);
     QVector<Mount *> newly_loaded_mounts;
     for (const QString &path : paths) {
-        qInfo() << "Loading mount at" << path;
-
         Mount *mount = nullptr;
         for (int i = 0; i < loaded_mounts.size(); ++i) {
             Mount *loaded_mount = loaded_mounts.at(i);
@@ -23,18 +21,17 @@ void MountAccess::loadMounts(QStringList paths)
         try {
             if (mount == nullptr) {
                 mount = new Mount(path);
+                connect(mount, &Mount::errorOccurred, this, &MountAccess::handleMountError);
             }
 
             if (!mount->load()) {
-                qWarning() << "Failed to load mount at" << path;
                 delete mount;
                 continue;
             }
 
-            qInfo() << "Finished loading" << path;
             newly_loaded_mounts.append(mount);
         } catch (std::exception &e) {
-            qWarning() << e.what();
+            errorOccurred(MountError::CaughtException, e.what());
         }
     }
 
@@ -50,7 +47,14 @@ std::optional<QByteArray> MountAccess::fetch(QString path)
             return std::optional<QByteArray>(mount->fetchFile(path));
         }
     }
+
     return std::nullopt;
+}
+
+MountAccess *MountAccess::ref()
+{
+    static MountAccess instance;
+    return &instance;
 }
 
 MountAccess::MountAccess(QObject *parent) :
@@ -70,4 +74,9 @@ void MountAccess::cleanupMounts()
         mount->deleteLater();
     }
     loaded_mounts.clear();
+}
+
+void MountAccess::handleMountError(MountError error, QString message)
+{
+    errorOccurred(error, message);
 }

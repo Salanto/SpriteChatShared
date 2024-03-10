@@ -5,6 +5,7 @@
 
 #include <QFile>
 #include <QObject>
+#include <QtTest/QSignalSpy>
 #include <QtTest/QTest>
 
 class TestMount : public QObject
@@ -23,42 +24,39 @@ class TestMount : public QObject
 
     void openArchive_data()
     {
-        QTest::addColumn<QStringList>("paths");
+        QTest::addColumn<QStringList>("archives");
 
         QTest::newRow("Load one archive") << QStringList({"archive.zip"});
         QTest::newRow("Load multiple archives") << QStringList({"second_archive.zip", "archive.zip"});
     }
     void openArchive()
     {
-        QFETCH(QStringList, paths);
-
-        for (QString path : paths) {
-            QTest::ignoreMessage(QtInfoMsg, QString("Loading mount at \"%1\"").arg(path).toUtf8());
-            QTest::ignoreMessage(QtInfoMsg, QString("Finished loading \"%1\"").arg(path).toUtf8());
-        }
-        access->loadMounts(paths);
+        QFETCH(QStringList, archives);
+        access->loadMounts(archives);
     }
 
     void failToOpenArchive_data()
     {
         QTest::addColumn<QStringList>("archives");
-        QTest::addColumn<QByteArray>("expected_error");
+        QTest::addColumn<MountError>("expected_error");
 
-        QTest::newRow("Missing archive") << QStringList{"missing_archive.zip"} << QByteArray("Failed to open \"missing_archive.zip\" Failed to open the archive file: The system cannot find the file specified.");
-        QTest::newRow("Corrupt archive") << QStringList{"corrupt_archive.zip"} << QByteArray("Failed to open \"corrupt_archive.zip\" Could not open the archive: Incorrect function.");
+        QTest::newRow("Missing archive") << QStringList{"missing_archive.zip"} << MountError::FailedToLoadMount;
+        QTest::newRow("Corrupt archive") << QStringList{"corrupt_archive.zip"} << MountError::FailedToLoadMount;
     }
     void failToOpenArchive()
     {
         QFETCH(QStringList, archives);
-        QFETCH(QByteArray, expected_error);
+        QFETCH(MountError, expected_error);
 
-        QTest::ignoreMessage(QtCriticalMsg, expected_error);
+        QSignalSpy spy(access, &MountAccess::errorOccurred);
         access->loadMounts(archives);
+        QList<QVariant> results = spy.takeFirst();
+        QVERIFY(results.at(0).value<MountError>() == expected_error);
     }
 
-    void fetchContent_data()
+    void tryToFetchContent_data()
     {
-        QTest::addColumn<QStringList>("paths");
+        QTest::addColumn<QStringList>("archives");
         QTest::addColumn<QString>("file");
         QTest::addColumn<bool>("result");
 
@@ -66,13 +64,13 @@ class TestMount : public QObject
         QTest::newRow("Fetch other_file.txt") << QStringList{"second_archive.zip"} << QString("other_file.txt") << true;
         QTest::newRow("Failed to fetch fake_file.txt") << QStringList{"archive.zip"} << QString("fake_file.txt") << false;
     }
-    void fetchContent()
+    void tryToFetchContent()
     {
-        QFETCH(QStringList, paths);
+        QFETCH(QStringList, archives);
         QFETCH(QString, file);
         QFETCH(bool, result);
 
-        access->loadMounts(paths);
+        access->loadMounts(archives);
         QVERIFY(access->fetch(file).has_value() == result);
     }
 

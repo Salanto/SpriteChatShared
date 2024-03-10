@@ -29,7 +29,7 @@ class SPRITECHATSHARED_EXPORT Mount : public QObject
     QByteArray fetchFile(QString path);
 
   Q_SIGNALS:
-    void errorOccurred();
+    void errorOccurred(MountError error, QString message);
 
   private:
     bool loadCache();

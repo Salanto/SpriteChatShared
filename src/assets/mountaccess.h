@@ -12,22 +12,20 @@ class SPRITECHATSHARED_EXPORT MountAccess : public QObject
     Q_OBJECT
 
   public:
-    static MountAccess *ref()
-    {
-        static MountAccess instance;
-        return &instance;
-    }
+    static MountAccess *ref();
 
     MountAccess(QObject *parent = nullptr);
     ~MountAccess();
 
     void loadMounts(QStringList paths);
 
-    bool canFetch()
-    {
-        return true;
-    }
     std::optional<QByteArray> fetch(QString path);
+
+  public slots:
+    void handleMountError(MountError error, QString message);
+
+  Q_SIGNALS:
+    void errorOccurred(MountError error, QString message);
 
   private:
     QReadWriteLock lock;
