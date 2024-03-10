@@ -24,7 +24,6 @@ FetchContent_Declare(
     GIT_TAG v4.0.5
     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/third-party/bit7z
 )
-set(BIT7Z_AUTO_FORMAT ON)
 FetchContent_MakeAvailable(bit7z)
 
 

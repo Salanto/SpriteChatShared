@@ -24,7 +24,7 @@ bool Mount::load()
     resetReader();
 
     try {
-        m_reader = new bit7z::BitArchiveReader(m_library, m_path.toStdString(), bit7z::BitFormat::Auto);
+        m_reader = new bit7z::BitArchiveReader(m_library, m_path.toStdString(), bit7z::BitFormat::Zip);
         m_reader->test();
     } catch (const std::exception &e) {
         errorOccurred(MountError::FailedToLoadMount, QString("Failed to load %1").arg(m_path));
