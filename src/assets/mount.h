@@ -19,7 +19,7 @@ class SPRITECHATSHARED_EXPORT Mount : public QObject
 
     QString path();
 
-    void load();
+    bool load();
 
     bool containsFile(QString path);
 
@@ -27,6 +27,9 @@ class SPRITECHATSHARED_EXPORT Mount : public QObject
      * @warning The file fetched MUST exist.
      */
     QByteArray fetchFile(QString path);
+
+  Q_SIGNALS:
+    void errorOccurred(MountError error, QString message);
 
   private:
     bool loadCache();

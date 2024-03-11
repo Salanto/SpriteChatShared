@@ -7,9 +7,7 @@
 
 Mount::Mount(QString path) :
     m_path(path)
-{
-    load();
-}
+{}
 
 Mount::~Mount()
 {
@@ -21,15 +19,17 @@ QString Mount::path()
     return m_path;
 }
 
-void Mount::load()
+bool Mount::load()
 {
     resetReader();
 
     try {
-        m_reader = new bit7z::BitArchiveReader(m_library, m_path.toStdString(), bit7z::BitFormat::Auto);
+        m_reader = new bit7z::BitArchiveReader(m_library, m_path.toStdString(), bit7z::BitFormat::Zip);
         m_reader->test();
-    } catch (const bit7z::BitException &e) {
-        qFatal(e.what());
+    } catch (const std::exception &e) {
+        Q_UNUSED(e);
+        Q_EMIT errorOccurred(MountError::FailedToLoadMount, QString("Failed to load %1").arg(m_path));
+        return false;
     }
 
     QFileInfo info(m_path);
@@ -42,11 +42,15 @@ void Mount::load()
                 QString path = QString::fromStdString(item.path()).replace("\\", "/");
                 m_cache.insert(path, item.index());
             }
-        } catch (const bit7z::BitException &e) {
-            qFatal(e.what());
+        } catch (const std::exception &e) {
+            Q_UNUSED(e);
+            Q_EMIT errorOccurred(MountError::FailedToIndexMount, QString("Failed to index %1").arg(m_path));
+            return false;
         }
         saveCache();
     }
+
+    return true;
 }
 
 bool Mount::containsFile(QString path)
@@ -61,8 +65,10 @@ QByteArray Mount::fetchFile(QString path)
 
     try {
         m_reader->extractTo(buffer, index);
-    } catch (const bit7z::BitException &e) {
-        qFatal(e.what());
+    } catch (const std::exception &e) {
+        Q_UNUSED(e);
+        Q_EMIT errorOccurred(MountError::FailedToFetchFile, QString("Failed to fetch %1 in %2").arg(path, m_path));
+        return QByteArray();
     }
 
     return QByteArray(reinterpret_cast<const char *>(buffer.data()), buffer.size());
@@ -71,24 +77,21 @@ QByteArray Mount::fetchFile(QString path)
 bool Mount::loadCache()
 {
     QFile file(m_path + ".cache");
-    if (!file.open(QIODevice::ReadOnly)) {
-        qCritical() << "Failed to open file of mount" << m_path << ":" << file.errorString();
+    if (!file.exists() || !file.open(QIODevice::ReadOnly)) {
         return false;
     }
 
     QDataStream stream(&file);
     QDateTime cache_last_modified;
     stream >> cache_last_modified;
-
     if (cache_last_modified < m_last_modified) {
-        qInfo() << "Skipping cache loading for mount" << m_path << ": out of date";
         return false;
     }
 
     m_cache.clear();
     stream >> m_cache;
     if (stream.status() != QDataStream::Ok) {
-        qCritical() << "Failed to load cache of mount" << m_path << "last known status:" << stream.status();
+        Q_EMIT errorOccurred(MountError::FailedToLoadCache, QString("Failed to load cache %1").arg(m_path));
         return false;
     }
 
@@ -99,7 +102,7 @@ void Mount::saveCache()
 {
     QFile file(m_path + ".cache");
     if (!file.open(QIODevice::WriteOnly)) {
-        qCritical() << "Failed to open file of mount" << m_path << ":" << file.errorString();
+        Q_EMIT errorOccurred(MountError::FailedToSaveCache, QString("Failed to save cache %1 of %2").arg(m_path, file.errorString()));
         return;
     }
 
@@ -117,6 +120,7 @@ void Mount::resetReader()
             m_reader = nullptr;
         }
     } catch (const std::exception &e) {
-        qFatal(e.what());
+        Q_EMIT errorOccurred(MountError::FailedToResetMount, QString("Failed to reset mount %1").arg(m_path));
+        qCritical() << e.what();
     }
 }
