@@ -9,4 +9,15 @@
 #define SPRITECHATSHARED_EXPORT Q_DECL_IMPORT
 #endif
 
+enum class MountError
+{
+    CaughtException,
+    FailedToLoadMount,
+    FailedToIndexMount,
+    FailedToResetMount,
+    FailedToFetchFile,
+    FailedToLoadCache,
+    FailedToSaveCache,
+};
+
 #endif // SPRITECHATSHARED_GLOBAL_H

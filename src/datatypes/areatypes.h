@@ -12,8 +12,6 @@ namespace AreaTypes {
     class SPRITECHATSHARED_EXPORT RGB
     {
       public:
-        RGB() = default;
-
         RGB fromString(const QString &value);
         QString toString() const;
 
