@@ -31,7 +31,7 @@ void MountAccess::loadMounts(QStringList paths)
 
             newly_loaded_mounts.append(mount);
         } catch (std::exception &e) {
-            errorOccurred(MountError::CaughtException, e.what());
+            Q_EMIT errorOccurred(MountError::CaughtException, e.what());
         }
     }
 
@@ -78,5 +78,5 @@ void MountAccess::cleanupMounts()
 
 void MountAccess::handleMountError(MountError error, QString message)
 {
-    errorOccurred(error, message);
+    Q_EMIT errorOccurred(error, message);
 }

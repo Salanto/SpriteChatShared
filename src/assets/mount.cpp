@@ -27,7 +27,8 @@ bool Mount::load()
         m_reader = new bit7z::BitArchiveReader(m_library, m_path.toStdString(), bit7z::BitFormat::Zip);
         m_reader->test();
     } catch (const std::exception &e) {
-        errorOccurred(MountError::FailedToLoadMount, QString("Failed to load %1").arg(m_path));
+        Q_UNUSED(e);
+        Q_EMIT errorOccurred(MountError::FailedToLoadMount, QString("Failed to load %1").arg(m_path));
         return false;
     }
 
@@ -42,7 +43,8 @@ bool Mount::load()
                 m_cache.insert(path, item.index());
             }
         } catch (const std::exception &e) {
-            errorOccurred(MountError::FailedToIndexMount, QString("Failed to index %1").arg(m_path));
+            Q_UNUSED(e);
+            Q_EMIT errorOccurred(MountError::FailedToIndexMount, QString("Failed to index %1").arg(m_path));
             return false;
         }
         saveCache();
@@ -64,7 +66,8 @@ QByteArray Mount::fetchFile(QString path)
     try {
         m_reader->extractTo(buffer, index);
     } catch (const std::exception &e) {
-        errorOccurred(MountError::FailedToFetchFile, QString("Failed to fetch %1 in %2").arg(path, m_path));
+        Q_UNUSED(e);
+        Q_EMIT errorOccurred(MountError::FailedToFetchFile, QString("Failed to fetch %1 in %2").arg(path, m_path));
         return QByteArray();
     }
 
@@ -88,7 +91,7 @@ bool Mount::loadCache()
     m_cache.clear();
     stream >> m_cache;
     if (stream.status() != QDataStream::Ok) {
-        errorOccurred(MountError::FailedToLoadCache, QString("Failed to load cache %1").arg(m_path));
+        Q_EMIT errorOccurred(MountError::FailedToLoadCache, QString("Failed to load cache %1").arg(m_path));
         return false;
     }
 
@@ -99,7 +102,7 @@ void Mount::saveCache()
 {
     QFile file(m_path + ".cache");
     if (!file.open(QIODevice::WriteOnly)) {
-        errorOccurred(MountError::FailedToSaveCache, QString("Failed to save cache %1 of %2").arg(m_path, file.errorString()));
+        Q_EMIT errorOccurred(MountError::FailedToSaveCache, QString("Failed to save cache %1 of %2").arg(m_path, file.errorString()));
         return;
     }
 
@@ -117,7 +120,7 @@ void Mount::resetReader()
             m_reader = nullptr;
         }
     } catch (const std::exception &e) {
-        errorOccurred(MountError::FailedToResetMount, QString("Failed to reset mount %1").arg(m_path));
+        Q_EMIT errorOccurred(MountError::FailedToResetMount, QString("Failed to reset mount %1").arg(m_path));
         qCritical() << e.what();
     }
 }
