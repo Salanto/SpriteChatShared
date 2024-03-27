@@ -17,6 +17,7 @@ class TestMount : public QObject
     {
         access = new MountAccess;
     }
+
     void cleanup()
     {
         delete access;

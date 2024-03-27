@@ -95,22 +95,24 @@ set_target_properties(SpriteChatShared PROPERTIES
 add_executable(SpriteChatTest WIN32
     test/testmount.h test/testmount.cpp
 )
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    target_include_directories(SpriteChatTest PUBLIC
+      test
+    )
 
-target_include_directories(SpriteChatTest PUBLIC
-  test
-)
+    target_link_libraries(SpriteChatTest PUBLIC
+      SpriteChatShared
+      Qt${QT_VERSION_MAJOR}::Core
+      Qt${QT_VERSION_MAJOR}::Test
+    )
 
-target_link_libraries(SpriteChatTest PUBLIC
-  SpriteChatShared
-  Qt${QT_VERSION_MAJOR}::Core
-  Qt${QT_VERSION_MAJOR}::Test
-)
+    target_link_directories(SpriteChatTest PUBLIC
+      $<TARGET_FILE_DIR:SpriteChatShared>
+    )
 
-target_link_directories(SpriteChatTest PUBLIC
-  $<TARGET_FILE_DIR:SpriteChatShared>
-)
+    set_target_properties(SpriteChatTest PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/testbin>
+        RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/testbin>
+    )
+endif()
 
-set_target_properties(SpriteChatTest PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/testbin>
-    RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/testbin>
-)
