@@ -73,7 +73,7 @@ target_include_directories(SpriteChatShared PUBLIC
     PUBLIC src/network/packets
     PUBLIC src/network/socket
     PUBLIC src/viewport
-    PUBLIC third-party/bit7z/include
+    PUBLIC third-party/bit7z
 )
 
 target_link_libraries(SpriteChatShared PRIVATE
@@ -92,25 +92,28 @@ set_target_properties(SpriteChatShared PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/bin>
 )
 
-add_executable(SpriteChatTest WIN32
-    test/testmount.h test/testmount.cpp
-)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    add_executable(SpriteChatTest WIN32
+        test/testmount.h test/testmount.cpp
+    )
 
-target_include_directories(SpriteChatTest PUBLIC
-  test
-)
+    target_include_directories(SpriteChatTest PUBLIC
+      test
+    )
 
-target_link_libraries(SpriteChatTest PUBLIC
-  SpriteChatShared
-  Qt${QT_VERSION_MAJOR}::Core
-  Qt${QT_VERSION_MAJOR}::Test
-)
+    target_link_libraries(SpriteChatTest PUBLIC
+      SpriteChatShared
+      Qt${QT_VERSION_MAJOR}::Core
+      Qt${QT_VERSION_MAJOR}::Test
+    )
 
-target_link_directories(SpriteChatTest PUBLIC
-  $<TARGET_FILE_DIR:SpriteChatShared>
-)
+    target_link_directories(SpriteChatTest PUBLIC
+      $<TARGET_FILE_DIR:SpriteChatShared>
+    )
 
-set_target_properties(SpriteChatTest PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/testbin>
-    RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/testbin>
-)
+    set_target_properties(SpriteChatTest PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/testbin>
+        RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/testbin>
+    )
+endif()
+

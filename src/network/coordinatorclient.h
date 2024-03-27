@@ -7,7 +7,7 @@
 
 class QNetworkAccessManager;
 class QNetworkReply;
-class QTmer;
+class QTimer;
 
 class SPRITECHATSHARED_EXPORT CoordinatorClient : public QObject
 {
