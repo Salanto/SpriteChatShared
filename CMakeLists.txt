@@ -73,7 +73,7 @@ target_include_directories(SpriteChatShared PUBLIC
     PUBLIC src/network/packets
     PUBLIC src/network/socket
     PUBLIC src/viewport
-    PUBLIC third-party/bit7z/include
+    PUBLIC third-party/bit7z
 )
 
 target_link_libraries(SpriteChatShared PRIVATE

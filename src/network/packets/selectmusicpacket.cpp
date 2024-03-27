@@ -28,7 +28,7 @@ QByteArray SelectMusicPacket::toJson() const
     QJsonObject l_data;
     l_data["channel"] = music_channel;
     l_data["songname"] = song_name;
-    l_data["flags"] = behaviour_flags.toInt();
+    l_data["flags"] = QJsonValue::fromVariant(QVariant(behaviour_flags));
 
     QJsonObject l_body;
     id = QRandomGenerator64::global()->generate64();

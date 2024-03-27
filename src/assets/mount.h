@@ -2,8 +2,8 @@
 
 #include "spritechatshared_global.h"
 
-#include "bit7z/bit7zlibrary.hpp"
-#include "bit7z/bitarchivereader.hpp"
+#include "include/bit7z/bit7zlibrary.hpp"
+#include "include/bit7z/bitarchivereader.hpp"
 
 #include <QDateTime>
 #include <QMap>
