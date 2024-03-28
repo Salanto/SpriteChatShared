@@ -92,10 +92,11 @@ set_target_properties(SpriteChatShared PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/bin>
 )
 
-add_executable(SpriteChatTest WIN32
-    test/testmount.h test/testmount.cpp
-)
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    add_executable(SpriteChatTest WIN32
+        test/testmount.h test/testmount.cpp
+    )
+
     target_include_directories(SpriteChatTest PUBLIC
       test
     )
