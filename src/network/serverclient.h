@@ -24,7 +24,7 @@ class SPRITECHATSHARED_EXPORT ServerClient : public QObject
   signals:
     void disconnected(QString reason);
     void connected();
-    void metadataTimeout(QString reason = "No reason provided");
+    void errorOccured(QString message = "No message provided.");
 
   public slots:
     void fetchServerMetadata(const CoordinatorTypes::ServerInfo &f_server);

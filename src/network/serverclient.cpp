@@ -17,7 +17,7 @@ ServerClient::ServerClient(QObject *parent) :
     timeout = new QTimer(this);
     timeout->setSingleShot(true);
     timeout->setInterval(METADATA_TIMEOUT);
-    connect(timeout, &QTimer::timeout, this, [this]() { emit metadataTimeout("Server did not respond in time."); });
+    connect(timeout, &QTimer::timeout, this, [this]() { emit errorOccured("Server did not respond in time."); });
 }
 
 ServerClient::~ServerClient()
@@ -36,12 +36,14 @@ void ServerClient::setSocket(ServerSocket *f_socket)
     freeSocket();
     ssocket = f_socket;
     connect(ssocket, &ServerSocket::dataReady, this, &ServerClient::handleServerMessage);
+    connect(ssocket, &ServerSocket::errorOccured, this, &ServerClient::errorOccured);
 }
 
 void ServerClient::freeSocket()
 {
     if (ssocket) {
         disconnect(ssocket, &ServerSocket::dataReady, this, &ServerClient::handleServerMessage);
+        disconnect(ssocket, &ServerSocket::errorOccured, this, &ServerClient::errorOccured);
         ssocket->disconnect();
         ssocket->deleteLater();
         ssocket = nullptr;

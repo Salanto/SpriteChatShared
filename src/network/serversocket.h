@@ -2,6 +2,7 @@
 #define SERVERSOCKET_H
 
 #include "coordinatortypes.h"
+#include "qabstractsocket.h"
 #include "sockettypes.h"
 #include "spritechatshared_global.h"
 
@@ -25,12 +26,13 @@ class SPRITECHATSHARED_EXPORT ServerSocket : public QObject
     void write(const QByteArray &message);
 
   signals:
-    void sslErrorOccurred();
+    void errorOccured(QString error_message);
     void connectionLost();
     void connected();
     void dataReady(const QByteArray &f_message);
 
   private slots:
+    void socketErrorOccured(QAbstractSocket::SocketError error);
     void handleSslError(const QList<QSslError> errors);
     void disconnectedFromHost();
 

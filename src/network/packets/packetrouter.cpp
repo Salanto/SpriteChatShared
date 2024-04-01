@@ -30,6 +30,7 @@ void PacketRouter::route(std::shared_ptr<AbstractPacket> f_packet)
         qDebug() << "Unable to route packet. Header unknown.";
         return;
     }
+    qDebug() << "Routing packet with header" << f_packet.get()->header();
     Route route = routes[f_packet->header()];
     emit(this->*route)(f_packet);
 }

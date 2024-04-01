@@ -11,6 +11,7 @@ ServerSocket::ServerSocket(CoordinatorTypes::ServerInfo f_server, QString f_endp
     connect(socket, &QWebSocket::disconnected, this, &ServerSocket::disconnectedFromHost);
     connect(socket, &QWebSocket::binaryMessageReceived, this, &ServerSocket::dataReady);
     connect(socket, &QWebSocket::connected, this, &ServerSocket::connected);
+    connect(socket, &QWebSocket::errorOccurred, this, &ServerSocket::socketErrorOccured);
 }
 
 void ServerSocket::connectToEndpoint(SocketTypes::SocketMode f_mode)
@@ -24,15 +25,14 @@ void ServerSocket::connectToEndpoint(SocketTypes::SocketMode f_mode)
         QSslConfiguration ssl_config = socket->sslConfiguration();
         if (ssl_config.caCertificates().size() == NO_CERTIFICATE) {
             qWarning() << "Unable to load CA Certificates.";
-            emit sslErrorOccurred();
-            return;
+            return emit errorOccured("Unable to load CA Certificates.");
         }
     }
     else {
         qDebug() << "Selected insecure connection.";
         connection_uri = QString("ws://%1:%2/%3").arg(server.ip, QString::number(server.ws_port), endpoint);
     }
-    qDebug() << "Connecting to " << connection_uri;
+    qDebug() << "Connecting to" << connection_uri;
     socket->open(connection_uri);
 }
 
@@ -52,12 +52,18 @@ void ServerSocket::write(const QByteArray &message)
     socket->sendBinaryMessage(message);
 }
 
+void ServerSocket::socketErrorOccured(QAbstractSocket::SocketError error)
+{
+    qDebug() << "Socket error" << error;
+    emit errorOccured(socket->errorString());
+}
+
 void ServerSocket::handleSslError(const QList<QSslError> errors)
 {
     for (const QSslError &error : errors) {
         qWarning() << "Ssl error occured:" << error.errorString();
+        emit errorOccured(error.errorString());
     }
-    emit sslErrorOccurred();
 }
 
 void ServerSocket::disconnectedFromHost()
