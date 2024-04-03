@@ -3,10 +3,9 @@
 
 #include "coordinatortypes.h"
 #include "qabstractsocket.h"
-#include "sockettypes.h"
 #include "spritechatshared_global.h"
-
 #include <QByteArray>
+#include <QQueue>
 #include <QString>
 #include <QWebSocketProtocol>
 #include <QtWebSockets/QWebSocket>
@@ -20,7 +19,14 @@ class SPRITECHATSHARED_EXPORT ServerSocket : public QObject
     ServerSocket(CoordinatorTypes::ServerInfo f_server, QString f_endpoint, QObject *parent = nullptr);
     ~ServerSocket() = default;
 
-    void connectToEndpoint(SocketTypes::SocketMode f_mode);
+    enum SocketMode : bool
+    {
+        INSECURE = false,
+        SECURE = true
+    };
+    Q_ENUM(SocketMode);
+
+    void connectToEndpoint(ServerSocket::SocketMode f_mode);
     void disconnect(QWebSocketProtocol::CloseCode f_reason = QWebSocketProtocol::CloseCodeNormal, const QString &f_message = "");
     QAbstractSocket::SocketState state();
     void write(const QByteArray &message);
@@ -39,9 +45,8 @@ class SPRITECHATSHARED_EXPORT ServerSocket : public QObject
   private:
     const CoordinatorTypes::ServerInfo server;
     const QString endpoint;
-    const int NO_CERTIFICATE = 0;
-    const int NO_PORT = -1;
-    SocketTypes::SocketMode mode;
+    ServerSocket::SocketMode mode;
+    QQueue<QByteArray> buffer;
     QWebSocket *socket;
 };
 

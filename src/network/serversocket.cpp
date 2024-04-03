@@ -2,6 +2,9 @@
 
 #include <QSysInfo>
 
+const int NO_CERTIFICATE = 0;
+const int NO_PORT = -1;
+
 ServerSocket::ServerSocket(CoordinatorTypes::ServerInfo f_server, QString f_endpoint, QObject *parent) :
     QObject{parent},
     server{f_server},
@@ -14,11 +17,11 @@ ServerSocket::ServerSocket(CoordinatorTypes::ServerInfo f_server, QString f_endp
     connect(socket, &QWebSocket::errorOccurred, this, &ServerSocket::socketErrorOccured);
 }
 
-void ServerSocket::connectToEndpoint(SocketTypes::SocketMode f_mode)
+void ServerSocket::connectToEndpoint(ServerSocket::SocketMode f_mode)
 {
     QString connection_uri;
     mode = f_mode;
-    if (mode == SocketTypes::SECURE) {
+    if (mode == ServerSocket::SECURE) {
         qDebug() << "Selected secure connection.";
         connection_uri = QString("wss://%1:%2/%3").arg(server.ip, QString::number(server.wss_port), endpoint);
         connect(socket, &QWebSocket::sslErrors, this, &ServerSocket::handleSslError);
@@ -68,10 +71,10 @@ void ServerSocket::handleSslError(const QList<QSslError> errors)
 
 void ServerSocket::disconnectedFromHost()
 {
-    if (mode == SocketTypes::SECURE) {
+    if (mode == ServerSocket::SECURE) {
         if (server.ws_port != NO_PORT) {
             qDebug() << "Downgrading connection to insecure.";
-            connectToEndpoint(SocketTypes::INSECURE);
+            connectToEndpoint(ServerSocket::INSECURE);
             return;
         }
         qDebug() << "Unable to downgrade connection. Insecure port not available.";

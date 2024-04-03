@@ -30,13 +30,10 @@ FetchContent_MakeAvailable(bit7z)
 add_library(SpriteChatShared SHARED
     src/spritechatshared_global.h
     src/network/packets/abstractpacket.h
-    src/network/packets/packetrouter.h src/network/packets/packetrouter.cpp
     src/network/packets/packetfactory.h src/network/packets/packetfactory.cpp
     src/network/packets/notificationpacket.h src/network/packets/notificationpacket.cpp
     src/datatypes/servertypes.h
-    src/datatypes/sockettypes.h
     src/network/serversocket.h src/network/serversocket.cpp
-    src/network/serverclient.h src/network/serverclient.cpp
     src/network/packets/serverhellopacket.h src/network/packets/serverhellopacket.cpp
     src/network/packets/hellopacket.h src/network/packets/hellopacket.cpp
     src/network/packets/charlistpacket.h src/network/packets/charlistpacket.cpp
@@ -63,6 +60,7 @@ add_library(SpriteChatShared SHARED
     src/datatypes/loadingtypes.h
     src/assets/mountaccess.h src/assets/mountaccess.cpp
     src/assets/mount.h src/assets/mount.cpp
+    src/network/serverrouter.h src/network/serverrouter.cpp
 )
 
 target_include_directories(SpriteChatShared PUBLIC
