@@ -38,22 +38,12 @@ ServerRouter::ServerRouter(QObject *parent) :
     routes["VIEWPORT"] = &ServerRouter::viewportAnimationReceived;
 
     metadata_timeout = new QTimer(this);
+    metadata_timeout->setSingleShot(true);
     metadata_timeout->setInterval(DEFAULT_TIMEOUT);
 }
 
 void ServerRouter::connectToDataEndpoint(CoordinatorTypes::ServerInfo f_server)
 {
-    QObject::connect(socket, &ServerSocket::connected, this, [this] {
-        QObject::connect(metadata_timeout, &QTimer::timeout, this, [this] {
-            emit errorOccured("Server did not respond in time with metadata.");
-        });
-        QObject::connect(this, &ServerRouter::metaDataReceived, this, [this](std::shared_ptr<AbstractPacket> f_packet) {
-            Q_UNUSED(f_packet);
-            metadata_timeout->stop();
-            emit connectedToData();
-        });
-        metadata_timeout->start();
-    });
     connect(f_server, DATAROUTE);
 }
 
@@ -70,6 +60,24 @@ void ServerRouter::connect(CoordinatorTypes::ServerInfo f_server, QString endpoi
     QObject::connect(socket, &ServerSocket::dataReady, this, &ServerRouter::receive);
     QObject::connect(socket, &ServerSocket::connectionLost, this, &ServerRouter::socketDisconnected);
     ServerSocket::SocketMode l_mode = f_server.wss_port != -1 ? ServerSocket::SECURE : ServerSocket::INSECURE;
+
+    if (endpoint == DATAROUTE) {
+        QObject::connect(socket, &ServerSocket::connected, this, [this] {
+            QObject::connect(metadata_timeout, &QTimer::timeout, this, [this] {
+                emit errorOccured("Server did not respond in time with metadata.");
+            });
+            QObject::connect(this, &ServerRouter::metaDataReceived, this, [this](std::shared_ptr<AbstractPacket> f_packet) {
+                Q_UNUSED(f_packet);
+                metadata_timeout->stop();
+                emit connectedToData();
+            });
+            metadata_timeout->start();
+        });
+    }
+
+    if (endpoint == GAMEROUTE) {
+        QObject::connect(socket, &ServerSocket::connected, this, &ServerRouter::connectedToGame);
+    }
     socket->connectToEndpoint(l_mode);
 }
 
