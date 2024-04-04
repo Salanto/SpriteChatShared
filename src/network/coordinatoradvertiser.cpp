@@ -6,7 +6,7 @@
 #include <QNetworkReply>
 #include <QTimer>
 
-CoordinatorAdvertiser::CoordinatorAdvertiser(QObject *parent, const QString &f_user_agent, bool f_enabled) :
+CoordinatorAdvertiser::CoordinatorAdvertiser(QObject *parent, const QString &f_user_agent) :
     QObject{parent},
     user_agent{f_user_agent}
 {
@@ -15,10 +15,6 @@ CoordinatorAdvertiser::CoordinatorAdvertiser(QObject *parent, const QString &f_u
     timeout = new QTimer(this);
     timeout->setInterval(HEARTBEAT);
     connect(timeout, &QTimer::timeout, this, &CoordinatorAdvertiser::advertise);
-    if (f_enabled) {
-        timeout->start();
-        advertise();
-    }
 }
 
 QString CoordinatorAdvertiser::userAgent() const

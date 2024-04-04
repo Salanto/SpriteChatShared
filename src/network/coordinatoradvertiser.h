@@ -15,7 +15,7 @@ class SPRITECHATSHARED_EXPORT CoordinatorAdvertiser : public QObject
     Q_OBJECT
 
   public:
-    explicit CoordinatorAdvertiser(QObject *parent = nullptr, const QString &f_user_agent = "UNKNOWN", bool f_enabled = false);
+    explicit CoordinatorAdvertiser(QObject *parent = nullptr, const QString &f_user_agent = "UNKNOWN");
 
     QString userAgent() const;
 
