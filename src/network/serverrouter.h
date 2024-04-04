@@ -56,6 +56,7 @@ class SPRITECHATSHARED_EXPORT ServerRouter : public QObject
     void write(const QByteArray &f_data);
 
   private slots:
+    void metadataTimeout();
     void receive(const QByteArray &f_data);
     void socketDisconnected();
 

@@ -40,6 +40,8 @@ ServerRouter::ServerRouter(QObject *parent) :
     metadata_timeout = new QTimer(this);
     metadata_timeout->setSingleShot(true);
     metadata_timeout->setInterval(DEFAULT_TIMEOUT);
+
+    QObject::connect(metadata_timeout, &QTimer::timeout, this, &ServerRouter::metadataTimeout);
 }
 
 void ServerRouter::connectToDataEndpoint(CoordinatorTypes::ServerInfo f_server)
@@ -49,6 +51,10 @@ void ServerRouter::connectToDataEndpoint(CoordinatorTypes::ServerInfo f_server)
 
 void ServerRouter::connectToGameEndpoint(CoordinatorTypes::ServerInfo f_server)
 {
+    if (metadata_timeout->isActive()) {
+        // We are no longer interested to know if this passes.
+        metadata_timeout->stop();
+    }
     connect(f_server, GAMEROUTE);
 }
 
@@ -63,9 +69,6 @@ void ServerRouter::connect(CoordinatorTypes::ServerInfo f_server, QString endpoi
 
     if (endpoint == DATAROUTE) {
         QObject::connect(socket, &ServerSocket::connected, this, [this] {
-            QObject::connect(metadata_timeout, &QTimer::timeout, this, [this] {
-                emit errorOccured("Server did not respond in time with metadata.");
-            });
             QObject::connect(this, &ServerRouter::metaDataReceived, this, [this](std::shared_ptr<AbstractPacket> f_packet) {
                 Q_UNUSED(f_packet);
                 metadata_timeout->stop();
@@ -94,6 +97,11 @@ void ServerRouter::disconnect(QWebSocketProtocol::CloseCode f_code, QString f_re
 void ServerRouter::write(const QByteArray &f_data)
 {
     socket->write(f_data);
+}
+
+void ServerRouter::metadataTimeout()
+{
+    emit errorOccured("Server did not respond in time with metadata.");
 }
 
 void ServerRouter::receive(const QByteArray &f_data)
